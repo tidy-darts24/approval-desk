@@ -274,6 +274,9 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
 .policy { grid-area: policy; padding: 24px; display: flex; flex-direction: column; gap: 6px; }
 .policy p { font-size: 14px; line-height: 1.4; }
 .policy .label { margin-bottom: 2px; }
+.policy__group { display: flex; flex-direction: column; gap: 2px; }
+.policy__group + .policy__group { margin-top: 6px; }
+.policy__head { font-family: var(--med); }
 .done__list { display: flex; flex-direction: column; gap: 12px; }
 .center { min-width: 0; }
 .tray { position: relative; min-height: 440px; }
@@ -331,6 +334,9 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
 .ghost__badge--stop { background: var(--magenta); }
 .ghost__badge svg { width: 1em; height: 1em; }
 .ghost.flip { animation: flip 0.35s ease-out; }
+/* During the automatic Corpay run the card stays still and only its name and badge fade in (reviewer feedback, 27 Oct 2026: the card flickered) */
+.ghost.swap .ghost__name, .ghost.swap .ghost__badge { animation: swap 0.3s ease-out; }
+@keyframes swap { from { opacity: 0.25; } to { opacity: 1; } }
 /* Physical card (in-person spend): the Corpay Visa artwork from Figma (Card/flat-front), with the team name where a cardholder name sits */
 .ghost__art { display: none; position: absolute; inset: 0; width: 100%; height: 100%; }
 .ghost--physical { background: none; border: 0; -webkit-backdrop-filter: none; backdrop-filter: none; border-radius: 4.6% / 7.3%; }
@@ -447,7 +453,7 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
 @media (max-width: 760px) { .foot__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); justify-content: start; gap: 32px 24px; } .foot__legal { justify-content: flex-start; } .foot__copy, .foot__reg { text-align: left; } .foot__logo { align-self: flex-start; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .glow, .current, .row--new, .ghost.flip, .mail__row--hl, .walk__spot { transition: none !important; animation: none !important; }
+  .glow, .current, .row--new, .ghost.flip, .ghost.swap .ghost__name, .ghost.swap .ghost__badge, .mail__row--hl, .walk__spot { transition: none !important; animation: none !important; }
 }
 </style>
 </head>
@@ -580,7 +586,7 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
                     <div class="mail__body">
                       <p>Hi,</p>
                       <p><span id="runLead">Ten payments are waiting for your sign-off</span>, and the bank cut-off is 5pm, so you’ve got 75 seconds.</p>
-                      <p>Check each one against the supplier file, purchase orders and policy on your desk. Approve it if everything matches. Reject it if anything’s wrong, whether that’s fraud, an error or spend that breaks policy. <span id="runTraps">Four of the ten shouldn’t go out.</span></p>
+                      <p>Check each one on your desk. Invoices need their supplier and account on the supplier file, and the same amount as their PO. Expenses, software renewals and ad spend aren’t on the supplier file, so check those against the policy. Reject anything that’s wrong, whether that’s fraud, an error or spend that breaks policy. <span id="runTraps">Four of the ten shouldn’t go out.</span></p>
                       <p>Thanks, and have a good Christmas.<br>Cara</p>
                     </div>
                     <div class="mail__start">
@@ -742,13 +748,10 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
           </aside>
           <aside class="policy glass" id="policy" aria-label="Policy">
             <p class="label">Policy</p>
-            <p>Invoices must match their PO amount.</p>
-            <p>Only pay suppliers and accounts on the supplier file.</p>
-            <p>Restaurant spend: up to £150 a bill.</p>
-            <p>Rail fares: up to £250 each.</p>
-            <p>Taxis: up to £75 a journey.</p>
-            <p>Software renewals need a current owner.</p>
-            <p>Paid ads run on Connectwork Ads only.</p>
+            <div class="policy__group"><p class="policy__head">Invoices</p><p>Supplier and account on the supplier file.</p><p>Amount matches the PO with the same number.</p></div>
+            <div class="policy__group"><p class="policy__head">Expenses</p><p>Restaurants: up to £150 a bill.</p><p>Rail fares: up to £250 each.</p><p>Taxis: up to £75 a journey.</p></div>
+            <div class="policy__group"><p class="policy__head">Software renewals</p><p>Not on the supplier file. They need a current owner.</p></div>
+            <div class="policy__group"><p class="policy__head">Ad spend</p><p>Connectwork Ads only.</p></div>
           </aside>
         </div>
       </div>
@@ -1176,7 +1179,7 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
     const pos = items.filter(i => i.po).map(i => i.po).sort((a, b) => a[0].localeCompare(b[0]));
     return { items, ongoing, onFile, pos };
   }
-  const ROUND_MS = 75000, START_TRAY = 3, ARRIVE_MS = 6000, CORPAY_STEP_MS = 650;
+  const ROUND_MS = 75000, START_TRAY = 3, ARRIVE_MS = 6000, CORPAY_STEP_MS = 1000;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const $ = s => document.querySelector(s);
@@ -1269,11 +1272,11 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
     { target: () => $('#supList'), sheet: true, title: 'Check the supplier file',
       text: e => `Is the supplier on file, and does the account match? ${e.name} is on file with an account ending ${e.acct}, not ${e.fake}. That’s the giveaway, so this payment shouldn’t go out.` },
     { target: () => $('#poList'), sheet: true, title: 'Check the purchase orders',
-      text: () => 'An invoice has to match its PO amount. A PO marked Paid has already gone out once, so don’t pay it again.' },
+      text: () => 'Find the PO with the same number as the invoice, because some suppliers have more than one. The amounts must match exactly. A PO marked Paid has already gone out once, so don’t pay it again.' },
     { target: () => $('#policy'), sheet: true, title: 'Check the policy',
-      text: () => 'Restaurants, rail, taxis, software renewals and ads each have a rule. Anything outside the rules gets rejected.' },
+      text: () => 'Expenses, software renewals and ad spend aren’t on the supplier file, so check them here: the spending limits for expenses, a current owner for renewals and Connectwork Ads for ad spend.' },
     { target: () => $('.decision'), title: 'Then approve or reject',
-      text: () => `Approve a payment if everything matches, and reject it if anything doesn’t, like this example. ${Word(TRAPS.length)} of your ${Word(ITEMS.length).toLowerCase()} payments shouldn’t go out, and you’ve got 75 seconds.` },
+      text: () => `Approve a payment if it passes its checks, and reject it if anything’s wrong, like this example. ${Word(TRAPS.length)} of your ${Word(ITEMS.length).toLowerCase()} payments shouldn’t go out, and you’ve got 75 seconds.` },
   ];
   function walkExample() {
     const bank = ITEMS.find(i => i.kind === 'bank');
@@ -1491,11 +1494,11 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
     }).join('');
 
     // Name every good payment that didn't go out, the way the problem payments are listed (user, 23 Oct 2026)
-    const WHY = { invoice: 'Genuine · on the supplier file and within its PO', expense: 'Genuine · within the expenses policy', ads: 'Genuine · Connectwork Ads is the approved network', renewal: 'Genuine · the software licence has an owner' };
+    const WHY = { invoice: i => `Genuine · on the supplier file and matches ${i.po[0]}`, expense: () => 'Genuine · within the expenses policy', ads: () => 'Genuine · Connectwork Ads is the approved network', renewal: () => 'Genuine · has a current owner (renewals aren’t on the supplier file)' };
     const missed = [...heldUp.map(i => [i, 'warn', 'Held up']), ...late.map(i => [i, 'neutral', 'In the tray'])];
     $('#heldLabel').hidden = $('#heldList').hidden = !missed.length;
     $('#heldLabel').textContent = `Good ${plural(missed.length, 'payment', 'payments')} that didn’t go out · ${money(missed.reduce((n, [i]) => n + i.amount, 0))}`;
-    $('#heldList').innerHTML = missed.map(([i, tone, label]) => rowHTML(`${i.ref} ${i.title}`, WHY[i.kind] || 'Genuine', money(i.amount), tone, label)).join('');
+    $('#heldList').innerHTML = missed.map(([i, tone, label]) => rowHTML(`${i.ref} ${i.title}`, WHY[i.kind] ? WHY[i.kind](i) : 'Genuine', money(i.amount), tone, label)).join('');
 
     const notes = [];
     if (late.length) notes.push(`${plural(late.length, 'The one', 'Those')} still in the tray when the clock stopped will go out late.`);
@@ -1513,12 +1516,14 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
     return `<button type="button" class="row row--btn${isNew ? ' row--new' : ''}" ${attr} aria-pressed="false"><span class="row__text"><span class="row__title">${esc(title)}</span><span class="row__meta">${esc(meta)}</span></span><span class="row__amt">${esc(amount)}</span><span class="chip chip--${tone}">${esc(label)}</span><span class="row__go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></button>`;
   }
   // In-person spend shows the physical Corpay card; everything else shows the virtual (ghost) card
-  function setGhost(name, badge, stop, physical) {
+  // quiet: the automatic run, where the card stays put and only its text fades; a click still gets the small flip
+  function setGhost(name, badge, stop, physical, quiet) {
     $('#ghostName').textContent = name;
     $('#ghostBadgeText').textContent = badge;
     $('#ghostBadge').classList.toggle('ghost__badge--stop', stop);
     const g = $('#ghost'); g.classList.toggle('ghost--physical', !!physical);
-    g.classList.remove('flip'); void g.offsetWidth; if (!reduce) g.classList.add('flip');
+    g.classList.remove('flip', 'swap'); void g.offsetWidth;
+    if (!reduce) g.classList.add(quiet ? 'swap' : 'flip');
   }
   function showDetail(kind, title, tone, label, rows) {
     $('#dKind').textContent = kind;
@@ -1543,7 +1548,7 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
   function selectItem(it, fromClick) {
     const c = it.corpay, d = it.detail;
     lastItem = it;
-    setGhost(it.card, it.badge || 'Locked', !!it.stop, !!it.physical);
+    setGhost(it.card, it.badge || 'Locked', !!it.stop, !!it.physical, running && !fromClick);
     const rows = [['Card', d.card], ['What happened', d.rule], ['Paid', money(c.amount)], ['Record', d.recon], ['Schedule', d.schedule], ['Rebate', rebateText(c.amount)]];
     showDetail('What Corpay did · ' + d.control, it.feedTitle || `${it.ref} ${it.title}`, c.tone, c.label, rows);
     for (const b of $('#feed').querySelectorAll('[data-id]')) b.setAttribute('aria-pressed', String(+b.dataset.id === it.id));
