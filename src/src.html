@@ -190,6 +190,24 @@ a { color: inherit; }
 }
 @media (max-width: 760px) { .stage[data-screen="intro"] .stage__inner { padding-bottom: 0; } }
 
+/* Opening an email on desktop is a camera move (Won, 6 Nov 2026): the copy, buttons, tree and hamper clear away and the
+   screen glides to the centre and comes closer, leaving the screen, the desk and the background. Back to the inbox reverses it. */
+@media (min-width: 1300px) {
+  .inbox-intro .intro__copy, .inbox-intro .intro__start { transition: opacity 0.45s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .inbox-intro .computer { transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); transform-origin: 50% 38%; }
+  .scene--tree, .scene--hamper { transition: opacity 0.5s ease, transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .inbox-intro:not([data-view="inbox"]) .intro__copy, .inbox-intro:not([data-view="inbox"]) .intro__start { opacity: 0; transform: translateX(-80px); pointer-events: none; }
+  .inbox-intro:not([data-view="inbox"]) .computer { transform: translate(var(--cam-x, 0px), var(--cam-y, 0px)) scale(var(--cam-s, 1)); }
+  .inbox-intro:not([data-view="inbox"]) .scene--hamper { opacity: 0; transform: translate(220px, 160px); }
+  .inbox-intro:not([data-view="inbox"]) .scene--tree { opacity: 0; transform: translateX(120px); }
+  .stage .inbox-intro:not([data-view="inbox"]) #playBtn { visibility: visible; } /* fades out with the rest instead of vanishing */
+  .stage .inbox-intro:not([data-view="inbox"]) .mail { height: 500px; } /* room for the email's button once the screen is close */
+  .stage .mail { transition: height 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); }
+}
+@media (min-width: 1300px) and (prefers-reduced-motion: reduce) {
+  .inbox-intro .intro__copy, .inbox-intro .intro__start, .inbox-intro .computer, .scene--tree, .scene--hamper { transition: none; }
+}
+
 /* Intro tags and How to enter (6 Nov 2026) */
 .tags { display: flex; flex-wrap: wrap; gap: 8px; }
 .tag { display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 8px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); font-family: var(--med); font-size: 14px; line-height: 1; }
@@ -1683,7 +1701,20 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
     for (const b of document.querySelectorAll('.mail__back')) b.textContent = '‹\u00a0 ' + FOLDERS[folder];
     updateNote();
   }
+  // The camera move: from the inbox, work out how far the computer has to travel to sit in the middle of the stage, and
+  // how close it can come and still fit, before the view changes (the CSS does the moving)
+  function aimCamera() {
+    const intro = $('#inboxIntro'), comp = intro.querySelector('.computer');
+    if (!matchMedia('(min-width: 1300px)').matches || intro.dataset.view !== 'inbox') return;
+    const r = comp.getBoundingClientRect(), st = stage.getBoundingClientRect(), mon = comp.querySelector('.monitor').getBoundingClientRect();
+    const monH = mon.height + 100; // the screen grows by 100px in email view
+    const s = Math.min(1.25, (innerHeight - 120) / monH, (st.width - 160) / r.width);
+    intro.style.setProperty('--cam-x', `${Math.round(st.left + st.width / 2 - (r.left + r.width / 2))}px`);
+    intro.style.setProperty('--cam-y', `${Math.round(Math.max(0, st.top) + 60 - mon.top + (s - 1) * monH * 0.38)}px`);
+    intro.style.setProperty('--cam-s', s.toFixed(3));
+  }
   function openMail(key) {
+    if (key) aimCamera();
     $('#inboxIntro').dataset.view = key || 'inbox';
     $('#mailInbox').hidden = !!key;
     for (const a of document.querySelectorAll('.mail__email')) a.hidden = a.id !== 'mail-' + key;
