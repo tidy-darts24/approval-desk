@@ -19,7 +19,12 @@ out = (
     .replace("{{LOGO_WHITE}}", inner.replace('fill="black"', 'fill="#FFFFFF"'))  # Two-Tone White
     .replace("{{LOGO_DARK}}", inner.replace('fill="black"', 'fill="#231F20"'))  # Two-Tone Black, on the ghost card
     .replace("{{COVER}}", b64("whitepaper-book@2x.webp"))  # exported from Figma Web/Whitepaper visual (1016:8687) at 2x
-    .replace("{{CARD}}", b64("physical-card@2x.webp"))  # exported from Figma Card/flat-front (41:6782) at 2x, shadow cropped off
+    .replace("{{CARD}}", b64("physical-card@2x.webp"))
+    .replace("{{BANNER_CARD}}", b64("banner-card.webp"))  # card mockup from the 44-days ad (1516:10173)
+    .replace("{{BANNER_BOOK}}", b64("banner-book.webp"))  # whitepaper book from CTA · Book (793:9105)
+    .replace("{{SCENE_TREE}}", b64("scene-tree.webp"))  # Won's Figma front (2142:8525): Christmas tree, desk and hamper cut-outs
+    .replace("{{SCENE_DESK}}", b64("scene-desk.webp"))
+    .replace("{{SCENE_HAMPER}}", b64("scene-hamper.webp"))  # Fortnum & Mason product photo: use needs their OK  # exported from Figma Card/flat-front (41:6782) at 2x, shadow cropped off
 )
 assert "{{" not in out, "unreplaced placeholder"
 (root / "approval-desk.html").write_text(out, encoding="utf-8")
