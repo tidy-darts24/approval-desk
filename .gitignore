@@ -1,0 +1,5 @@
+# Corpay web fonts are licensed for internal use: kept out of the repo, read from src/assets/ at build time
+src/assets/*.woff2
+src/approval-desk.html
+src/share/
+.DS_Store
