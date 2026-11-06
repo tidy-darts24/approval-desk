@@ -11,6 +11,7 @@
   --magenta: #B54275; --light-blue: #B6D8F0; --blue: #2E3D76; --mid-blue: #5B7FB9; --yellow: #FFB651; --purple: #522F42;
   --paper: #FFFFFF; --ink: #121212; --ink-2: #6B6166; --rule: #E3DFDB; --subtle: #F7F6F5; --white: #FFFFFF; --black: #000000;
   --locked: #2C9726; /* from the approved merchant-locking creative; off-palette, flagged */
+  --approve: #278521; --reject: #942627; --notice: #E66828; --held: #5C5459; /* DS positive, negative and notice, as in the Figma desk */
   --glass: rgba(255, 255, 255, 0.07); --glass-line: rgba(255, 255, 255, 0.12); --track: rgba(255, 255, 255, 0.16);
   --reg: "GTAmericaRegular", Aptos, Arial, sans-serif;
   --med: "GTAmericaMedium", Aptos, Arial, sans-serif;
@@ -34,8 +35,8 @@ a { color: inherit; }
 .h3 { font-size: 24px; line-height: 1.3; }
 .sub { font-size: 20px; line-height: 1.4; }
 .small { font-size: 14px; line-height: 1.6; }
-.label { font-family: var(--med); font-size: 14px; line-height: 1.4; color: var(--light-blue); }
-.accent { color: var(--light-blue); }
+.label { font-family: var(--med); font-size: 14px; line-height: 1.4; color: var(--white); }
+.accent { color: var(--white); }
 .num { font-variant-numeric: tabular-nums; }
 @media (max-width: 760px) { .h1 { font-size: 32px; line-height: 1.2; } .sub { font-size: 16px; line-height: 1.6; } }
 
@@ -81,10 +82,12 @@ a { color: inherit; }
 .screen { flex: 1; display: flex; flex-direction: column; padding-top: 48px; }
 .screen [data-focus]:focus { outline: none; }
 
-/* Payment document (the paper on the desk) */
+/* Payment documents (6 Nov 2026): one skeleton, one cue per medium. Email = sender header, External tag and the message;
+   Invoice (also ad spend and software renewals) = letterhead bar and supplier monogram; Expense = a torn receipt edge */
 .doc { position: relative; background: var(--paper); color: var(--ink); border-radius: 12px; padding: 32px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 24px 56px rgba(0, 0, 0, 0.4); }
-.doc__top { display: flex; justify-content: space-between; gap: 16px; font-size: 14px; line-height: 1.4; color: var(--ink-2); }
-.doc__type { font-family: var(--med); text-transform: uppercase; letter-spacing: 0.06em; }
+.doc__top { display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 1.4; color: var(--ink-2); }
+.doc__top svg { width: 20px; height: 20px; flex: none; color: var(--ink); }
+.doc__type { flex: 1; font-family: var(--med); text-transform: uppercase; letter-spacing: 0.06em; }
 .doc__title { font-size: 24px; line-height: 1.3; }
 .doc__body { font-size: 16px; line-height: 1.6; white-space: pre-line; }
 .doc hr { margin: 0; border: 0; border-top: 1px solid var(--rule); }
@@ -94,10 +97,21 @@ a { color: inherit; }
 .doc__amount { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
 .doc__amount span { font-size: 14px; color: var(--ink-2); }
 .doc__amount strong { font-family: var(--reg); font-weight: 400; font-size: 32px; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.doc__from, .doc__supplier { display: flex; align-items: center; gap: 12px; }
+.doc__mono { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 8px; background: var(--subtle); font-family: var(--med); font-size: 14px; }
+.doc__from .doc__mono { border-radius: 50%; }
+.doc__who { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.doc__sender { font-family: var(--med); font-size: 16px; line-height: 1.5; }
+.doc__addr { font-size: 14px; line-height: 1.5; color: var(--ink-2); overflow-wrap: anywhere; }
+.doc__ext { flex: none; padding: 2px 8px; border-radius: 8px; background: var(--subtle); font-family: var(--med); font-size: 14px; line-height: 1.5; }
+.doc--invoice { overflow: hidden; }
+.doc--invoice::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; background: var(--blue); }
+.doc--expense { border-radius: 12px 12px 0 0; }
+.doc--expense::after { content: ""; position: absolute; left: 0; right: 0; bottom: -8px; height: 8px; background: linear-gradient(-45deg, transparent 6px, var(--paper) 0) 0 0 / 16px 8px repeat-x, linear-gradient(45deg, transparent 6px, var(--paper) 0) 0 0 / 16px 8px repeat-x; }
 .stamp { position: absolute; top: 72px; right: 28px; transform: rotate(-8deg); border: 3px solid; border-radius: 8px; padding: 4px 14px; background: var(--paper); font-family: var(--med); font-size: 20px; line-height: 1.4; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0; pointer-events: none; }
-.stamp--ok { color: var(--blue); border-color: var(--blue); }
-.stamp--no { color: var(--magenta); border-color: var(--magenta); left: 28px; right: auto; transform: rotate(8deg); }
-@media (max-width: 760px) { .doc { padding: 24px; gap: 14px; } .doc__amount strong { font-size: 24px; } }
+.stamp--ok { color: var(--approve); border-color: var(--approve); }
+.stamp--no { color: var(--reject); border-color: var(--reject); left: 28px; right: auto; transform: rotate(8deg); }
+@media (max-width: 760px) { .doc { padding: 24px; gap: 14px; } .doc__amount strong { font-size: 24px; } .doc__title { font-size: 20px; } }
 
 /* Rows and status chips */
 .row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 16px; background: var(--paper); color: var(--ink); border-radius: 12px; padding: 14px 20px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18); }
@@ -121,10 +135,10 @@ a { color: inherit; }
 /* HUD */
 .hud { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px 48px; flex-wrap: wrap; }
 .hud__title { display: flex; flex-direction: column; gap: 6px; }
-.hud__title p { font-size: 14px; color: var(--light-blue); }
+.hud__title p { font-size: 14px; color: var(--white); opacity: 0.8; }
 .counters { display: flex; gap: 48px; }
 .counter { display: flex; flex-direction: column; }
-.counter span { font-size: 14px; line-height: 1.6; color: var(--light-blue); }
+.counter span { font-size: 14px; line-height: 1.6; color: var(--white); opacity: 0.8; }
 .counter strong { font-family: var(--reg); font-weight: 400; font-size: 24px; line-height: 1.3; font-variant-numeric: tabular-nums; }
 .bar { height: 6px; border-radius: 3px; background: var(--track); margin-top: 28px; overflow: hidden; }
 .bar i { display: block; height: 100%; border-radius: 3px; background: var(--magenta); transform-origin: left center; transition: transform 0.1s linear; }
@@ -136,12 +150,42 @@ a { color: inherit; }
   .bar { margin-top: 16px; }
 }
 
+/* Intro tags and How to enter (6 Nov 2026) */
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag { display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 8px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); font-family: var(--med); font-size: 14px; line-height: 1; }
+.intro__btns { display: flex; flex-wrap: wrap; gap: 16px; }
+.btn--ghost { background: rgba(255, 255, 255, 0.12); }
+.btn--ghost:hover { background: rgba(255, 255, 255, 0.18); }
+.howto { width: min(600px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 0; border-radius: 12px; background: var(--paper); color: var(--ink); box-shadow: 0 24px 56px rgba(0, 0, 0, 0.45); }
+.howto::backdrop { background: rgba(3, 2, 3, 0.72); }
+.howto__inner { display: flex; flex-direction: column; gap: 20px; padding: 28px 32px 32px; }
+.howto__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.howto__head h2 { font-family: var(--med); font-size: 24px; line-height: 1.3; }
+.howto__close { width: 48px; height: 48px; margin: -8px -12px -8px 0; border: 0; border-radius: 8px; background: none; color: var(--ink); display: grid; place-items: center; cursor: pointer; }
+.howto__close:hover { background: var(--subtle); }
+.howto__close svg { width: 20px; height: 20px; }
+.howto ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 16px; counter-reset: step; }
+.howto li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; counter-increment: step; }
+.howto li::before { content: counter(step); width: 28px; height: 28px; display: grid; place-items: center; border-radius: 8px; background: var(--magenta); color: var(--white); font-family: var(--med); font-size: 14px; }
+.howto__prize b { font-family: var(--med); font-weight: 500; display: block; }
+.howto hr { margin: 0; border: 0; border-top: 1px solid var(--rule); }
+.howto .small { color: var(--ink-2); }
+.howto .small a { color: inherit; }
+.howto :focus-visible { outline-color: var(--blue); }
+.howto .btn { align-self: flex-start; }
+@media (max-width: 760px) {
+  .howto { width: 100%; max-width: none; margin: auto 0 0; border-radius: 12px 12px 0 0; max-height: 92dvh; }
+  .howto__inner { padding: 12px 20px max(24px, env(safe-area-inset-bottom, 0px)); }
+  .howto__inner::before { content: ""; align-self: center; width: 40px; height: 4px; border-radius: 2px; background: var(--rule); }
+  .howto .btn, .intro__btns .btn { width: 100%; }
+}
+
 /* 1 · Inbox opening (user, 23 Oct 2026): a computer on the desk with the month-end email waiting.
    Opening it (the row or the button) shows the email, and the email starts the round. The hamper tag stays in view. */
 .intro__copy { display: flex; flex-direction: column; gap: 24px; }
 .intro__start { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
-.intro__start p { color: var(--light-blue); }
-.intro__start a { color: var(--light-blue); }
+.intro__start p { color: var(--white); opacity: 0.8; }
+.intro__start a { color: inherit; }
 .inbox-intro { flex: 1; display: grid; grid-template-columns: minmax(360px, 472px) minmax(0, 768px); grid-template-areas: "copy computer" "start computer"; column-gap: 40px; row-gap: 24px; align-content: center; justify-content: space-between; }
 .inbox-intro .intro__copy { grid-area: copy; align-self: end; }
 .inbox-intro .intro__start { grid-area: start; align-self: start; }
@@ -206,6 +250,7 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
 .gift__tag { display: flex; flex-direction: column; gap: 8px; border-radius: 12px; background: var(--magenta); color: var(--white); box-shadow: 0 32px 64px rgba(0, 0, 0, 0.4); }
 .gift__tag .label, .gift__tag .small { color: var(--white); }
 .gift__tag hr { width: 100%; margin: 12px 0 4px; border: 0; border-top: 2px dashed rgba(255, 255, 255, 0.55); }
+.gift__icon svg { width: 34px; height: 34px; }
 .gift__icon { width: 64px; height: 64px; margin-bottom: 8px; border-radius: 12px; border: 2px solid rgba(255, 255, 255, 0.55); display: grid; place-items: center; font-size: 34px; line-height: 1; }
 .prize-tag { position: absolute; z-index: 2; right: 20px; top: 440px; width: 320px; padding: 24px; transform: rotate(-3deg); }
 .prize-tag--phone { display: none; }
@@ -261,178 +306,186 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
   .walk__text { font-size: 14px; }
 }
 
-/* Round 1 desk */
-.desk { display: grid; grid-template-columns: 340px 520px 320px; grid-template-areas: "policy center ref" "done center ref"; grid-template-rows: auto 1fr; justify-content: space-between; column-gap: 40px; row-gap: 24px; margin-top: 40px; align-items: start; }
-.done { grid-area: done; display: flex; flex-direction: column; gap: 12px; }
-.center { grid-area: center; }
-.ref { grid-area: ref; }
-.policy { grid-area: policy; padding: 24px; display: flex; flex-direction: column; gap: 6px; }
-.policy p { font-size: 14px; line-height: 1.4; }
-.policy .label { margin-bottom: 2px; }
-.policy__group { display: flex; flex-direction: column; gap: 2px; }
-.policy__group + .policy__group { margin-top: 6px; }
-.policy__head { font-family: var(--med); }
-.done__list { display: flex; flex-direction: column; gap: 12px; }
-.center { min-width: 0; }
-.tray { position: relative; min-height: 440px; }
-.tray .behind { position: absolute; inset: 0; overflow: hidden; }
+/* Round 1 desk (v2, 6 Nov 2026): one reference panel around the in-tray. Policy on the left and the supplier file and POs
+   on the right, both as label and value rows; the payment and its Reject/Approve bar sit in a dark tray in the middle. */
+#s-play .hud { justify-content: flex-start; }
+.counter--tray { display: none; }
+.desk { display: grid; grid-template-columns: 290px minmax(0, 1fr) 290px; grid-template-areas: "policy center ref"; gap: 24px; margin-top: 24px; padding: 24px; align-items: stretch;
+  border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(46, 24, 35, 0.72); box-shadow: inset 0 6px 71px rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(32px); backdrop-filter: blur(32px); }
+.center { grid-area: center; min-width: 0; position: relative; display: flex; flex-direction: column; gap: 12px; padding: 12px; border-radius: 16px; background: #0D050A; box-shadow: inset 0 6px 24px rgba(0, 0, 0, 0.5); }
+.ref { grid-area: ref; display: flex; flex-direction: column; gap: 12px; }
+.policy { grid-area: policy; display: flex; flex-direction: column; gap: 12px; }
+.ref .label, .policy > .label { font-size: 18px; line-height: 1.4; }
+.ref__sec, .policy__group { display: flex; flex-direction: column; gap: 3px; }
+.policy__head { font-family: var(--med); font-size: 14px; line-height: 1.4; opacity: 0.6; }
+.ref__pair { display: flex; justify-content: space-between; gap: 12px; margin: 0; font-size: 14px; line-height: 1.4; font-variant-numeric: tabular-nums; }
+.ref__pair span:first-child { font-family: var(--med); }
+.ref__pair span:last-child { opacity: 0.8; text-align: right; }
+.ref hr, .policy hr { margin: 0; border: 0; border-top: 1px solid var(--track); }
+.tray { position: relative; flex: 1; min-height: 460px; display: grid; place-items: center; }
+.tray > .doc, .tray > .example, .tray > .empty { width: min(520px, 100%); }
+.tray .behind { position: absolute; left: 50%; top: 50%; width: min(520px, 100%); translate: -50% -50%; overflow: hidden; }
 .tray .b1 { transform: rotate(-3deg) translate(16px, -12px); }
 .tray .b2 { transform: rotate(4deg) translate(-10px, 18px); }
 .current { position: relative; z-index: 2; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; will-change: transform; }
 .current.dragging { cursor: grabbing; }
-.current::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: var(--lean, 0); background: var(--lean-c, transparent); }
-.empty { position: relative; z-index: 2; min-height: 200px; display: grid; place-items: center; text-align: center; padding: 32px; color: var(--light-blue); }
-.decision { display: flex; justify-content: center; gap: 16px; margin-top: 32px; }
-.hint { margin-top: 16px; text-align: center; font-size: 14px; color: var(--light-blue); }
+.empty { position: relative; z-index: 2; min-height: 200px; display: grid; place-items: center; text-align: center; padding: 32px; color: var(--white); }
+.decision { position: relative; z-index: 3; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.decision .btn--lg { height: 56px; border-radius: 12px; font-size: 16px; }
+.decision svg { width: 20px; height: 20px; }
+.btn--reject { background: var(--reject); }
+.btn--approve { background: var(--approve); }
+.btn--reject:hover, .btn--approve:hover { filter: brightness(1.08); }
+.hint { margin: 0; text-align: center; font-size: 14px; color: var(--white); opacity: 0.7; }
 .hint--touch { display: none; }
 @media (pointer: coarse) { .hint--keys { display: none; } .hint--touch { display: block; } }
-.ref { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
-.ref__sec { display: flex; flex-direction: column; gap: 6px; }
-.ref__sec .label { margin-bottom: 2px; }
-.ref__pair { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; line-height: 1.4; font-variant-numeric: tabular-nums; }
-.ref__pair span:first-child { font-family: var(--med); }
-.ref__pair--paid span:last-child { color: var(--light-blue); }
-.ref hr { margin: 0; border: 0; border-top: 1px solid var(--track); }
-.ref p { font-size: 14px; line-height: 1.4; }
+/* Pressing or dragging a payment: the card shrinks, the cards behind go, and the tray splits into a Reject half and an
+   Approve half down to each button. The half the card is over fills in, and the other button dims. */
+.zones { position: absolute; inset: 12px 12px 46px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; pointer-events: none; opacity: 0; transition: opacity 0.15s ease; }
+.zone { border-radius: 12px; border: 2px dashed; }
+.zone--no { border-color: var(--reject); background: rgba(148, 38, 39, 0.18); }
+.zone--ok { border-color: var(--approve); background: rgba(39, 133, 33, 0.18); }
+.center.is-dragging .zones { opacity: 1; }
+.center.lean-no .zone--no { background: rgba(148, 38, 39, 0.5); }
+.center.lean-ok .zone--ok { background: rgba(39, 133, 33, 0.5); }
+.center.lean-no #approveBtn, .center.lean-ok #rejectBtn { opacity: 0.4; }
+.center.is-dragging .behind { visibility: hidden; }
 .sheet-btn { display: none; }
 .checks { display: contents; }
 .checks__now { display: none; }
-@media (max-width: 1279px) { .desk { grid-template-columns: minmax(0, 520px) 300px; grid-template-areas: "center ref" "center policy"; justify-content: center; } .done { display: none; } }
-/* Phones (mobile MVP, 5 Nov 2026): a one-line HUD, the payment and the decision bar on one screen,
-   Approve and Reject pinned in thumb reach, and the checks as a sheet over the page rather than below it */
+@media (max-width: 1100px) { .desk { grid-template-columns: minmax(0, 1fr) 260px; grid-template-areas: "center ref" "center policy"; } }
+/* Phones: a one-line HUD, the tray fills the screen, Reject and Approve pinned in thumb reach, and the supplier file,
+   POs and policy as one sheet that slides up behind the decision bar */
 @media (max-width: 760px) {
   #s-play .hud { gap: 12px; }
-  #s-play .hud__title p, #s-play .counter--extra { display: none; }
+  #s-play .counter--extra { display: none; }
+  #s-play .counter--tray { display: flex; }
   #s-play .counters { display: flex; width: auto; gap: 24px; }
   #s-play .counter { flex-direction: row; align-items: baseline; gap: 8px; }
-  .stage[data-screen="play"] .stage__inner { padding-bottom: 200px; min-height: calc(100dvh + 240px); } /* room to scroll the payment up without the band below showing above the bar */
-  .desk { grid-template-columns: minmax(0, 1fr); grid-template-areas: "center"; gap: 0; margin-top: 20px; }
+  .stage[data-screen="play"] .stage__inner { padding-bottom: 200px; min-height: calc(100dvh + 240px); }
+  .desk { grid-template-columns: minmax(0, 1fr); grid-template-areas: "center"; gap: 0; margin-top: 16px; padding: 0; border: 0; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .center { padding: 8px; background: rgba(13, 5, 10, 0.6); }
   .tray { min-height: 0; }
   .tray .behind { display: none; }
-  .decision { position: fixed; z-index: 42; left: 0; right: 0; bottom: 0; margin: 0; flex-wrap: wrap; gap: 8px 12px;
+  .zones { inset: 8px; }
+  .hint { display: none !important; }
+  .decision { position: fixed; z-index: 42; left: 0; right: 0; bottom: 0; margin: 0; grid-template-columns: 1fr 1fr; gap: 8px 12px;
     padding: 10px max(16px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
     background: rgba(46, 24, 35, 0.94); border-top: 1px solid var(--glass-line); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
-  .decision .btn--lg { flex: 1; height: 56px; padding: 0 16px; }
-  .sheet-btn { display: flex; flex: 1 0 100%; height: 40px; padding: 0 14px; justify-content: space-between; border-color: var(--glass-line); background: var(--glass); }
+  .sheet-btn { display: flex; grid-column: 1 / -1; height: 40px; padding: 0 14px; justify-content: space-between; border-color: var(--glass-line); background: var(--glass); }
   .checks { display: flex; flex-direction: column; gap: 12px; position: fixed; z-index: 41; left: 0; right: 0; bottom: var(--bar-h, 136px); max-height: min(58dvh, 520px); overflow-y: auto; overscroll-behavior: contain;
     padding: 16px 16px 20px; border-radius: 12px 12px 0 0; background: var(--night-1); border: 1px solid var(--glass-line); border-bottom: 0; box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.45);
     transform: translateY(calc(100% + var(--bar-h, 136px))); visibility: hidden; transition: transform 0.25s ease, visibility 0s linear 0.25s; }
   .checks.open { transform: none; visibility: visible; transition: transform 0.25s ease; }
-  .checks .ref, .checks .policy { padding: 16px; }
+  .checks .ref, .checks .policy { padding: 4px 0; }
   .checks__now { display: block; position: sticky; top: -16px; z-index: 1; margin: -16px -16px 0; padding: 14px 16px 12px; background: var(--paper); color: var(--ink); border-radius: 12px 12px 0 0; font-size: 14px; line-height: 1.4; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25); }
   .checks__now:empty { display: none; }
   .checks__now b { font-family: var(--med); font-weight: 500; }
   .checks__now span { color: var(--ink-2); }
 }
 
-/* Result */
-.split { display: grid; grid-template-columns: minmax(0, 600px) minmax(0, 600px); justify-content: space-between; gap: 40px; margin-top: 48px; }
-.stack { display: flex; flex-direction: column; gap: 24px; }
-.stack--tight { gap: 12px; }
-.stat { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
-.btnrow { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
-@media (max-width: 1100px) { .split { grid-template-columns: minmax(0, 1fr); } }
-@media (max-width: 760px) { .split { margin-top: 32px; gap: 32px; } .stat .h3 { font-size: 20px; line-height: 1.4; } .btnrow .btn { width: 100%; } }
-
-/* Round 2: ghost card and feed */
-.ghost-wrap { position: relative; padding: 12px 0 28px; }
-.ghost { position: relative; width: min(440px, 100%); aspect-ratio: 560 / 353; border-radius: 28px; overflow: hidden; transform: rotate(6deg); background: linear-gradient(140deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.34) 55%, rgba(255, 255, 255, 0.5)); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 32px 64px rgba(0, 0, 0, 0.35); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); color: var(--ink); container-type: inline-size; }
-.ghost__caret { position: absolute; right: -6%; bottom: -2%; width: 72%; height: auto; }
-.ghost__logo { position: absolute; left: 7%; top: 12%; width: 30%; height: auto; }
-/* Card text is sized from the card width (cqw): 20px name and 16px badge on the 440px card, so the longest name
-   (Oakbridge Fleet Services) fits beside the widest badge, and both shrink in step on phones */
-.ghost__virtual { position: absolute; right: 8%; top: 12%; font-size: 20px; font-size: 4.545cqw; }
-.ghost__row { position: absolute; left: 4%; right: 4%; bottom: 7%; display: flex; align-items: center; justify-content: space-between; gap: 2.5cqw; background: var(--paper); border-radius: 16px; padding: 4.5% 5%; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18); }
-.ghost__name { font-family: var(--med); font-size: 20px; font-size: 4.545cqw; line-height: 1.2; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ghost__badge { flex: none; display: inline-flex; align-items: center; gap: 0.5em; border-radius: 8px; padding: 0.375em 0.875em; background: var(--locked); color: var(--white); font-family: var(--med); font-size: 16px; font-size: 3.636cqw; line-height: 1.3; white-space: nowrap; }
-.ghost__badge--stop { background: var(--magenta); }
-.ghost__badge svg { width: 1em; height: 1em; }
-.ghost.flip { animation: flip 0.35s ease-out; }
-/* During the automatic Corpay run the card stays still and only its name and badge fade in (reviewer feedback, 27 Oct 2026: the card flickered) */
-.ghost.swap .ghost__name, .ghost.swap .ghost__badge { animation: swap 0.3s ease-out; }
-@keyframes swap { from { opacity: 0.25; } to { opacity: 1; } }
-/* Physical card (in-person spend): the Corpay Visa artwork from Figma (Card/flat-front), with the team name where a cardholder name sits */
-.ghost__art { display: none; position: absolute; inset: 0; width: 100%; height: 100%; }
-.ghost--physical { background: none; border: 0; -webkit-backdrop-filter: none; backdrop-filter: none; border-radius: 4.6% / 7.3%; }
-.ghost--physical .ghost__art { display: block; }
-.ghost--physical .ghost__caret, .ghost--physical .ghost__logo, .ghost--physical .ghost__virtual { display: none; }
-.ghost--physical .ghost__row { display: contents; }
-.ghost--physical .ghost__name { position: absolute; right: 7%; bottom: 10%; max-width: 50%; color: var(--white); }
-.ghost--physical .ghost__badge { position: absolute; right: 6%; top: 10%; }
-@keyframes flip { from { transform: rotate(6deg) translateY(10px); opacity: 0.85; } to { transform: rotate(6deg); opacity: 1; } }
-/* Round 2 list: one card per payment, landing in turn. Each opens in place to show the control and the rule. */
-.split--corpay { align-items: start; }
-.corpay-side { position: sticky; top: 24px; }
-.clist { display: flex; flex-direction: column; gap: 10px; }
-.crow { border-radius: 12px; background: var(--paper); color: var(--ink); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18); transition: box-shadow 0.15s ease; }
-.crow .row { background: none; box-shadow: none; }
-.crow:hover { box-shadow: 0 0 0 2px rgba(182, 216, 240, 0.6), 0 8px 24px rgba(0, 0, 0, 0.18); }
-.crow.is-open { box-shadow: 0 0 0 3px var(--light-blue), 0 8px 24px rgba(0, 0, 0, 0.18); }
-.is-revealing .crow { animation: land 0.4s ease-out both; animation-delay: calc(var(--i) * 110ms); }
-.is-revealing .crow .chip { animation: pop 0.3s ease-out both; animation-delay: calc(var(--i) * 110ms + 220ms); }
-.is-revealing .row--btn { cursor: default; }
+/* Result (6 Nov 2026): round 1 and round 2 on one screen. Your desk and With Corpay sit side by side; only the wrong calls
+   get a card, the same payment on the same line in both panels. With Corpay waits, blurred, until the player asks. */
+.result__head { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-top: 24px; text-align: center; }
+.result__head .sub { max-width: 880px; }
+.panels { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 36px; align-items: start; }
+.panel { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 24px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(46, 24, 35, 0.72); box-shadow: inset 0 6px 71px rgba(255, 255, 255, 0.08); -webkit-backdrop-filter: blur(32px); backdrop-filter: blur(32px); }
+.panel__body { display: flex; flex-direction: column; gap: 16px; transition: filter 0.4s ease, opacity 0.4s ease; }
+.panel__title { font-family: var(--med); font-size: 24px; line-height: 1.3; }
+.panel hr { margin: 0; border: 0; border-top: 1px solid var(--track); }
+.panel__label { font-family: var(--med); font-size: 14px; line-height: 1.4; }
+.totals { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 16px; align-items: baseline; }
+.totals dt { font-size: 16px; opacity: 0.8; }
+.totals dd { margin: 0; font-size: 24px; line-height: 1.3; text-align: right; font-variant-numeric: tabular-nums; }
+.cards { display: flex; flex-direction: column; gap: 12px; }
+.cards__none { opacity: 0.8; }
+.scard { min-height: 104px; display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 16px 20px; border-radius: 12px; color: var(--ink); background: var(--paper); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18); }
+.scard--caught { background: linear-gradient(rgba(44, 151, 38, 0.15), rgba(44, 151, 38, 0.15)), var(--paper); }
+.scard--missed { background: linear-gradient(rgba(230, 104, 40, 0.15), rgba(230, 104, 40, 0.15)), var(--paper); }
+.scard--held { background: var(--subtle); }
+.scard__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.scard__amt { font-family: var(--med); font-size: 16px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.scard--caught .scard__amt { color: var(--approve); }
+.scard--missed .scard__amt { color: var(--notice); }
+.scard__name { font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+.scard__title { font-family: var(--med); font-size: 16px; line-height: 1.5; }
+.scard__meta { font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+.vchip { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; height: 24px; border-radius: 8px; font-family: var(--med); font-size: 14px; color: var(--white); white-space: nowrap; }
+.vchip svg { width: 16px; height: 16px; }
+.vchip--caught { background: var(--approve); }
+.vchip--missed { background: var(--notice); }
+.vchip--held { background: var(--held); }
+.scard--wait { box-shadow: none; background: var(--subtle); flex-direction: row; align-items: center; gap: 8px; }
+.wait__chip, .wait__line { display: block; height: 24px; border-radius: 12px; background: #E3DFDB; }
+.wait__chip { width: 88px; } .wait__line { width: 160px; height: 12px; }
+.panel--corpay .scard__name { display: none; }
+.panel--corpay.is-waiting .panel__body { filter: blur(8px); opacity: 0.6; pointer-events: none; user-select: none; }
+.reveal-btn { position: absolute; z-index: 2; left: 50%; top: 50%; translate: -50% -50%; }
+.panel--corpay:not(.is-waiting) .reveal-btn { display: none; }
+.panel--corpay.is-revealing .scard { animation: land 0.4s ease-out both; animation-delay: calc(var(--i) * 140ms); }
 @keyframes land { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-@keyframes pop { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: none; } }
-.row--btn { width: 100%; border: 0; font: inherit; text-align: left; cursor: pointer; grid-template-columns: minmax(0, 1fr) auto auto 18px; }
-.row__go { display: grid; place-items: center; color: var(--ink-2); transition: transform 0.15s ease; }
-.row__go svg { width: 18px; height: 18px; }
-.row--btn:hover .row__go, .row--btn[aria-expanded="true"] .row__go { color: var(--blue); }
-.row--btn[aria-expanded="true"] .row__go { transform: rotate(90deg); }
-.row__you { display: flex; align-items: center; gap: 6px; font-size: 14px; line-height: 1.6; color: var(--ink-2); }
-.row__you.is-miss { color: var(--ink); }
-.row__you.is-miss::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); }
-.crow__why { padding: 0 20px 16px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; line-height: 1.5; }
-.crow__why p { margin: 0; }
-.crow__ctl { padding-top: 12px; border-top: 1px solid var(--rule); font-family: var(--med); color: var(--blue); }
-.crow__reb { color: var(--ink-2); }
-.inline-card { display: none; width: 140px; height: auto; margin: 4px 0 6px; border-radius: 7px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); }
-.list-hint { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 14px; line-height: 1.4; color: var(--light-blue); }
-.list-hint svg { display: none; flex: none; width: 18px; height: 18px; color: var(--light-blue); }
-.list-hint.is-ready { align-self: flex-start; padding: 10px 14px; border-radius: 8px; background: var(--glass); border: 1px solid var(--glass-line); font-family: var(--med); font-size: 16px; color: var(--white); }
-.list-hint.is-ready svg { display: block; }
-.corpay-fine { margin-top: 32px; max-width: 760px; }
-/* Phones: the list comes first and the card visual steps aside; a physical card shows as a thumbnail in its opened row */
+.result__next { display: flex; justify-content: center; margin-top: 32px; }
+.result__fine { margin-top: 16px; text-align: center; opacity: 0.8; }
+@media (max-width: 900px) {
+  .panels { grid-template-columns: minmax(0, 1fr); }
+  .panel--corpay .scard__name { display: block; }
+  .scard { min-height: 0; }
+}
 @media (max-width: 760px) {
-  .corpay-side { position: static; order: 2; }
-  .corpay-side .ghost-wrap { display: none; }
-  .inline-card { display: block; }
-  .crow__why { padding: 0 16px 14px; }
-  .row.row--btn { grid-template-areas: "text chip go" "amt amt go"; }
-  .crow:not(.is-open) .row__meta { display: none; }
+  .result__head { align-items: flex-start; text-align: left; }
+  .panel { padding: 16px; }
+  .panel__title { font-size: 20px; }
+  .totals dd { font-family: var(--med); font-size: 16px; line-height: 1.6; }
+  .reveal-btn { width: calc(100% - 32px); }
+  .result__next .btn { width: 100%; }
+  .result__fine { text-align: left; }
 }
 
-/* Prize draw */
+/* End (6 Nov 2026): two banners on the left (Corpay cards with Talk to an expert, and the whitepaper), the prize draw on
+   the right. After entering, the draw panel turns into the share link, because a team is in once five people have entered. */
+.end { display: grid; grid-template-columns: minmax(0, 600px) minmax(0, 600px); justify-content: space-between; gap: 40px; margin-top: 48px; align-items: start; }
+.end__left { display: flex; flex-direction: column; gap: 24px; }
+.banner { position: relative; overflow: hidden; min-height: 300px; display: flex; align-items: center; padding: 28px 32px; border-radius: 12px; }
+.banner__text { position: relative; z-index: 1; width: 54%; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.banner__eyebrow { font-family: var(--med); font-size: 14px; line-height: 1.4; }
+.banner p:not(.banner__eyebrow) { font-size: 16px; line-height: 1.5; }
+.banner--cards { background: linear-gradient(180deg, #3B4F86 0%, #6E8DBE 45%, #C9C2B2 80%, #E4D3B4 100%); }
+.banner--paper { background: linear-gradient(160deg, #582D43 0%, #B54275 55%, #F08A5D 100%); }
+.banner__card { position: absolute; right: -96px; top: 50%; width: 320px; height: auto; translate: 0 -50%; rotate: -24deg; border-radius: 16px; box-shadow: 0 32px 64px rgba(0, 0, 0, 0.4); }
+.banner__book { position: absolute; right: -120px; top: 50%; width: 380px; height: auto; translate: 0 -50%; }
+.btn--white { background: var(--white); color: var(--ink); }
+.btn--white:hover { background: #EEECEB; }
+.again { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; }
+.again svg { width: 16px; height: 16px; }
 .draw { padding: 32px; align-self: start; }
 .draw__panel { display: flex; flex-direction: column; gap: 20px; }
+.draw__eyebrow { display: inline-flex; align-items: center; gap: 6px; }
+.draw__eyebrow svg, .tag svg { width: 16px; height: 16px; color: #E86FA4; }
 .entry { display: flex; flex-direction: column; gap: 16px; }
 .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .field--wide { grid-column: 1 / -1; }
 .field label { font-family: var(--med); font-size: 14px; line-height: 1.4; }
 .field input { height: 48px; border-radius: 8px; border: 2px solid transparent; background: var(--paper); color: var(--ink); padding: 0 14px; font-family: var(--reg); font-size: 16px; }
-.field input:focus-visible { outline: 2px solid var(--light-blue); outline-offset: 2px; }
+.field input:focus-visible { outline: 2px solid var(--white); outline-offset: 2px; }
 .field input[aria-invalid="true"] { border-color: var(--yellow); }
 .err { font-size: 14px; line-height: 1.4; color: var(--yellow); }
-.challenge { display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 12px; background: var(--glass); border: 1px solid var(--glass-line); }
 .share { display: flex; gap: 8px; }
 .share input { flex: 1; min-width: 0; height: 48px; border-radius: 8px; border: 0; background: var(--paper); color: var(--ink); padding: 0 14px; font-family: var(--reg); font-size: 14px; }
 .share .btn { flex: none; }
 .entry .btn { align-self: flex-start; }
-.draw img { width: 100%; max-width: 520px; height: auto; align-self: center; }
-@media (max-width: 760px) { .draw { padding: 20px; } .fields { grid-template-columns: minmax(0, 1fr); } .entry .btn, .draw .btn { width: 100%; } .share { flex-direction: column; } }
-
-/* End */
-.score { padding: 24px; }
-.score table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-.score th { font-family: var(--med); font-weight: 500; font-size: 14px; line-height: 1.4; color: var(--light-blue); text-align: left; padding: 0 0 12px; }
-.score td { padding: 8px 0; font-size: 16px; vertical-align: baseline; }
-.score td + td, .score th + th { padding-left: 16px; }
-.score td:not(:first-child) { font-size: 24px; line-height: 1.3; white-space: nowrap; }
-.score td:last-child { color: var(--light-blue); }
-.wp { display: grid; place-items: center; }
-.wp img { width: 100%; max-width: 640px; height: auto; }
+.draw .small, .draw .fine { opacity: 0.8; }
 .fine { font-size: 14px; line-height: 1.6; }
-@media (max-width: 760px) { .score td:not(:first-child) { font-family: var(--med); font-size: 16px; line-height: 1.6; } .score td { font-size: 14px; } }
+@media (max-width: 1100px) { .end { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 760px) {
+  .end { margin-top: 24px; gap: 24px; }
+  .draw { padding: 20px; } .fields { grid-template-columns: minmax(0, 1fr); } .entry .btn, .draw .btn { width: 100%; } .share { flex-direction: column; }
+  .banner { min-height: 0; padding: 24px 20px 180px; align-items: flex-start; }
+  .banner__text { width: 100%; }
+  .banner__card { top: auto; bottom: -40px; right: -30px; translate: none; width: 260px; }
+  .banner__book { top: auto; bottom: -40px; right: -60px; translate: none; width: 260px; }
+}
 
 /* Research band */
 .research { background: var(--subtle); color: var(--ink); }
@@ -473,7 +526,7 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
 <div class="walk" id="walk" hidden>
   <div class="walk__spot" id="walkSpot" aria-hidden="true"></div>
   <div class="walk__card" id="walkCard" role="dialog" aria-modal="true" aria-labelledby="walkTitle" aria-describedby="walkText">
-    <p class="label walk__step" id="walkStep">How to check a payment · 1 of 5</p>
+    <p class="label walk__step" id="walkStep">How to check a payment: 1 of 5</p>
     <h3 class="walk__title" id="walkTitle" tabindex="-1">Start with the payment</h3>
     <p class="walk__text" id="walkText"></p>
     <div class="walk__nav">
@@ -482,6 +535,22 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
     </div>
   </div>
 </div>
+
+<!-- How to enter (6 Nov 2026): a bottom sheet on phones, a centred dialog on wider screens -->
+<dialog class="howto" id="howto" aria-labelledby="howtoTitle">
+  <div class="howto__inner">
+    <div class="howto__head"><h2 id="howtoTitle">How to enter</h2><button class="howto__close" type="button" id="howClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+    <ol>
+      <li>Play the game. It takes about two minutes, and any score counts.</li>
+      <li>Enter your details at the end, using your work email.</li>
+      <li>Share the game with your team. Once five people from your company have entered, you included, your team is in the draw.</li>
+    </ol>
+    <p class="howto__prize"><b>The prize</b>The Fortnum’s Family Christmas Hamper from Fortnum &amp; Mason (RRP £250), to share with your team. Thirteen Christmas treats in a wicker hamper, including English sparkling wine, Malbec, biscuits and chocolate coins.</p>
+    <hr>
+    <p class="small">The draw closes at 5pm on 11 December 2026, and we’ll email the winning team by 18 December 2026. Open to UK residents aged 18 or over. <a href="#" data-placeholder="prize draw terms">Prize draw terms</a> apply.</p>
+    <button class="btn btn--primary btn--lg" type="button" id="howPlay">Play the game</button>
+  </div>
+</dialog>
 
 <main>
   <section class="stage" id="stage" data-screen="intro" aria-label="The Payments Challenge game">
@@ -497,9 +566,9 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
       <div class="screen" id="s-intro">
         <div class="inbox-intro" id="inboxIntro" data-view="inbox">
           <div class="intro__copy">
-            <p class="label">🎄 Corpay Christmas prize draw</p>
+            <div class="tags"><span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C9.5 3 11 5 12 8c1-3 2.5-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>Win a Christmas hamper for your team</span><span class="tag">2-minute game</span><span class="tag">No sign-up</span></div>
             <h1 class="h1" data-focus tabindex="-1">Clear your desk in time for Christmas.</h1>
-            <p class="sub">Every supplier payment and expense report needs your approval before the Christmas break. Take five with this mini game, then enter the draw to win a Christmas hamper for your team of up to ten. Everyone who plays can enter, whatever their score.</p>
+            <p class="sub">Every supplier payment and expense report needs your approval before the Christmas break. Take five with this mini game, and your team could win a Christmas hamper.</p>
           </div>
           <div class="computer">
             <div class="monitor">
@@ -523,7 +592,7 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
                         <span class="mail__text">
                           <span class="mail__top"><span class="mail__from">Corpay</span><span class="mail__tag mail__tag--blue">Pinned</span><span class="mail__time">16:30</span></span>
                           <span class="mail__subject">🎁 Win a Christmas hamper for your team</span>
-                          <span class="mail__preview">Everyone who plays can enter the draw, whatever their score. Closes 11 December.</span>
+                          <span class="mail__preview">Play the game, get five people from your company in, and your team is in the draw.</span>
                         </span>
                       </button></li>
                       <li><button class="mail__row is-unread" type="button" data-mail="office">
@@ -606,8 +675,8 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
                     <hr>
                     <div class="mail__body">
                       <p>Hi,</p>
-                      <p>Everyone who plays The Payments Challenge can enter our prize draw for a Christmas hamper big enough for a team of up to ten, whatever their score.</p>
-                      <p>Sign off the payment run, then enter the draw at the end. It closes on 11 December 2026, and <a href="#" data-placeholder="prize draw terms">prize draw terms</a> apply.</p>
+                      <p>Play The Payments Challenge and your team could win The Fortnum’s Family Christmas Hamper. Any score counts.</p>
+                      <p>Sign off the payment run, enter your details at the end, then share the game. Once five people from your company have entered, your team is in the draw. It closes at 5pm on 11 December 2026, and <a href="#" data-placeholder="prize draw terms">prize draw terms</a> apply.</p>
                       <p>The Corpay team</p>
                     </div>
                     <div class="mail__start"><button class="btn btn--primary mail__torun" type="button">Open the payment run email</button></div>
@@ -693,184 +762,134 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
               </div>
             </div>
             <div class="gift__tag prize-tag prize-tag--desk" aria-hidden="true">
-              <span class="gift__icon">🎁</span>
+              <span class="gift__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C9.5 3 11 5 12 8c1-3 2.5-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg></span>
               <p class="label">The prize</p>
-              <p class="h3">A Christmas hamper</p>
-              <p>For a team of up to ten</p>
+              <p class="h3">The Fortnum’s Family Christmas Hamper</p>
+              <p>To share with your team</p>
               <hr>
-              <p class="small">Draw closes 11 December 2026</p>
+              <p class="small">Draw closes 5pm, 11 December 2026</p>
             </div>
           </div>
           <div class="intro__start">
-            <button class="btn btn--primary btn--lg" id="playBtn" type="button">Open the email</button>
-            <p class="small">Two rounds, about two minutes. No sign-up to play.<br>Closes 11 December 2026. <a href="#" data-placeholder="prize draw terms">Prize draw terms</a> apply.</p>
+            <div class="intro__btns"><button class="btn btn--primary btn--lg" id="playBtn" type="button">Play the game</button><button class="btn btn--ghost btn--lg" id="howBtn" type="button" aria-haspopup="dialog">How to enter</button></div>
+            <p class="small"><a href="#" data-placeholder="prize draw terms">Prize draw terms</a> apply.</p>
           </div>
           <div class="gift__tag prize-tag prize-tag--phone" aria-hidden="true">
-              <span class="gift__icon">🎁</span>
+              <span class="gift__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C9.5 3 11 5 12 8c1-3 2.5-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg></span>
               <p class="label">The prize</p>
-              <p class="h3">A Christmas hamper</p>
-              <p>For a team of up to ten</p>
+              <p class="h3">The Fortnum’s Family Christmas Hamper</p>
+              <p>To share with your team</p>
               <hr>
-              <p class="small">Draw closes 11 December 2026</p>
+              <p class="small">Draw closes 5pm, 11 December 2026</p>
             </div>
         </div>
       </div>
 
-      <!-- 2 · Round 1 -->
+      <!-- 2 · Round 1 (v2 desk, 6 Nov 2026): one reference panel around the in-tray -->
       <div class="screen" id="s-play" hidden>
+        <h2 class="sr" data-focus tabindex="-1">Round 1: your desk before Christmas</h2>
         <div class="hud">
-          <div class="hud__title">
-            <h2 class="h3" data-focus tabindex="-1">Round 1 · Your desk before Christmas</h2>
-            <p>Approve or reject each payment before the office shuts for Christmas.</p>
-          </div>
           <div class="counters">
             <div class="counter"><span>Time left</span><strong id="c-time">1:15</strong></div>
-            <div class="counter"><span>In the tray</span><strong id="c-tray">3</strong></div>
+            <div class="counter counter--tray"><span>In the tray</span><strong id="c-tray">3</strong></div>
             <div class="counter counter--extra"><span>Paid out</span><strong id="c-paid">£0</strong></div>
-            <div class="counter counter--extra"><span>Rebate</span><strong id="c-rebate">£0</strong></div>
+            <div class="counter counter--extra"><span>Rebate earned</span><strong id="c-rebate">£0</strong></div>
           </div>
         </div>
         <div class="bar" role="progressbar" aria-label="Time left" aria-valuemin="0" aria-valuemax="75" id="bar"><i id="barFill"></i></div>
         <div class="desk">
-          <div class="done">
-            <p class="label" id="doneLabel">Done · 0 of 10</p>
-            <div class="done__list" id="doneList"></div>
-          </div>
-          <div class="center">
+          <div class="center" id="intray">
+            <div class="zones" aria-hidden="true"><span class="zone zone--no"></span><span class="zone zone--ok"></span></div>
             <div class="tray" id="tray"></div>
             <div class="decision" id="decision">
               <button class="btn btn--secondary sheet-btn" id="sheetBtn" type="button" aria-expanded="false" aria-controls="checks"><span>Suppliers, POs and policy</span><span id="sheetState">Show</span></button>
-              <button class="btn btn--secondary btn--lg" id="rejectBtn" type="button">← Reject</button>
-              <button class="btn btn--primary btn--lg" id="approveBtn" type="button">Approve →</button>
+              <button class="btn btn--reject btn--lg" id="rejectBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>Reject</button>
+              <button class="btn btn--approve btn--lg" id="approveBtn" type="button">Approve<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
             </div>
             <p class="hint hint--keys">Use the ← and → keys, or drag the payment left or right.</p>
             <p class="hint hint--touch">Swipe the payment left to reject or right to approve.</p>
           </div>
-          <!-- On phones the supplier file, POs and policy are one sheet that slides up behind the decision bar, so the payment stays in view -->
+          <!-- On phones the supplier file, POs and policy are one sheet that slides up behind the decision bar -->
           <div class="checks" id="checks">
           <div class="checks__now" id="checksNow" aria-hidden="true"></div>
-          <aside class="ref glass" id="ref" aria-label="Supplier file and purchase orders">
+          <aside class="ref" id="ref" aria-label="Supplier file and purchase orders">
             <div class="ref__sec" id="supList"></div>
             <hr>
             <div class="ref__sec" id="poList"></div>
           </aside>
-          <aside class="policy glass" id="policy" aria-label="Policy">
+          <aside class="policy" id="policy" aria-label="Policy">
             <p class="label">Policy</p>
-            <div class="policy__group"><p class="policy__head">Invoices</p><p>Supplier and account on the supplier file.</p><p>Amount matches the PO with the same number.</p></div>
-            <div class="policy__group"><p class="policy__head">Expenses</p><p>Restaurants: up to £150 a bill.</p><p>Rail fares: up to £250 each.</p><p>Taxis: up to £75 a journey.</p></div>
-            <div class="policy__group"><p class="policy__head">Software renewals</p><p>Not on the supplier file. They need a current owner.</p></div>
-            <div class="policy__group"><p class="policy__head">Ad spend</p><p>Connectwork Ads only.</p></div>
+            <div class="policy__group"><p class="policy__head">Invoices</p><p class="ref__pair"><span>Supplier and account</span><span>On file</span></p><p class="ref__pair"><span>Amount</span><span>Same as its PO</span></p></div>
+            <hr>
+            <div class="policy__group"><p class="policy__head">Expenses</p><p class="ref__pair"><span>Restaurants</span><span>Up to £150 a bill</span></p><p class="ref__pair"><span>Rail fares</span><span>Up to £250 each</span></p><p class="ref__pair"><span>Taxis</span><span>Up to £75 a journey</span></p></div>
+            <hr>
+            <div class="policy__group"><p class="policy__head">Software renewals</p><p class="ref__pair"><span>Supplier file</span><span>Not on it</span></p><p class="ref__pair"><span>Owner</span><span>Needs a current one</span></p></div>
+            <hr>
+            <div class="policy__group"><p class="policy__head">Ad spend</p><p class="ref__pair"><span>Network</span><span>Connectwork Ads only</span></p></div>
           </aside>
           </div>
         </div>
       </div>
 
-      <!-- 3 · Round 1 result -->
+      <!-- 3 · Result (6 Nov 2026): Your desk and With Corpay side by side. Round 2 is the reveal on this screen. -->
       <div class="screen" id="s-result" hidden>
-        <div class="hud">
-          <div class="hud__title">
-            <h2 class="h3" id="r-title">Round 1 · Time’s up</h2>
-            <p>Here’s what left your desk.</p>
-          </div>
-          <div class="counters">
-            <div class="counter"><span>Correct calls</span><strong id="r-correct">0 of 10</strong></div>
-            <div class="counter"><span>Time taken</span><strong id="r-time">0:00</strong></div>
-            <div class="counter"><span>Paid out</span><strong id="r-paid">£0</strong></div>
-            <div class="counter"><span>Rebate</span><strong>£0</strong></div>
-          </div>
+        <div class="result__head">
+          <h2 class="h1" id="verdict" data-focus tabindex="-1">You stopped 0 of 4.</h2>
+          <p class="sub" id="verdictDetail"></p>
         </div>
-        <div class="bar"><i style="transform: scaleX(0)"></i></div>
-        <div class="split">
-          <div class="stack">
-            <h3 class="h1" id="verdict" data-focus tabindex="-1">You stopped 0 of 9.</h3>
-            <p class="sub" id="verdictDetail"></p>
-            <div class="stat glass">
-              <p class="h3"><span class="accent">85%</span> of CFOs believe their current payment processes increase the risk of error, fraud or off-policy spend.¹</p>
-              <p class="small">¹ Censuswide survey (Feb 2026) of 300 UK CFOs with £20m+ turnover, for Corpay’s The Card-First Approach to Spend Modernisation.</p>
+        <div class="panels">
+          <section class="panel" aria-labelledby="pDesk">
+            <h3 class="panel__title" id="pDesk">Your desk</h3>
+            <dl class="totals" id="deskTotals"></dl>
+            <hr>
+            <p class="panel__label" id="deskLabel"></p>
+            <div class="cards" id="deskCards"></div>
+          </section>
+          <section class="panel panel--corpay is-waiting" id="corpayPanel" aria-labelledby="pCorpay">
+            <h3 class="panel__title" id="pCorpay">With Corpay</h3>
+            <div class="panel__body" id="corpayBody" aria-hidden="true">
+              <dl class="totals" id="corpayTotals"></dl>
+              <hr>
+              <p class="panel__label" id="corpayLabel"></p>
+              <div class="cards" id="corpayCards"></div>
             </div>
-            <div class="btnrow"><button class="btn btn--primary btn--lg" id="corpayBtn" type="button">What if you’d used Corpay?</button></div>
-          </div>
-          <div class="stack stack--tight">
-            <p class="label" id="trapLabel">Your four problem payments</p>
-            <div class="stack stack--tight" id="trapList"></div>
-            <p class="label held-label" id="heldLabel" hidden>Good payments that didn’t go out</p>
-            <div class="stack stack--tight" id="heldList" hidden></div>
-            <p class="small" id="lateNote"></p>
-          </div>
+            <button class="btn btn--primary btn--lg reveal-btn" id="corpayBtn" type="button">What if you’d used Corpay?</button>
+          </section>
         </div>
+        <div class="result__next" id="resultNext" hidden><button class="btn btn--primary btn--lg" id="endBtn" type="button">Enter the prize draw</button></div>
+        <p class="fine result__fine" id="rebateFine" hidden>*Up to 1% rebate on qualifying spend. Subject to agreed card-based monthly volumes; actual rate depends on monthly spend. Illustrative, not guaranteed.</p>
+        <p class="fine result__fine" id="statFine">¹ Censuswide survey (Feb 2026) of 300 UK CFOs with £20m+ turnover, for Corpay’s The Card-First Approach to Spend Modernisation.</p>
       </div>
 
-      <!-- 4 · Round 2: what if you'd used Corpay? (user, 5 Nov 2026). The same ten payments land straight away,
-           each with the card control that handled it, and any of them opens to show the rule behind it. -->
-      <div class="screen" id="s-corpay" hidden>
-        <div class="hud">
-          <div class="hud__title">
-            <h2 class="h3" data-focus tabindex="-1">Round 2 · What if you’d used Corpay?</h2>
-            <p>Same ten payments. This time the card rules do the checking, and the desk is clear before Christmas.</p>
-          </div>
-          <div class="counters">
-            <div class="counter"><span>Problems stopped</span><strong id="k-stop">0 of 4</strong></div>
-            <div class="counter"><span>Paid out</span><strong id="k-paid">£0</strong></div>
-            <div class="counter"><span>Rebate</span><strong class="accent" id="k-rebate">£0</strong></div>
-          </div>
-        </div>
-        <div class="bar bar--done"><i id="kBar" style="transform: scaleX(0)"></i></div>
-        <div class="split split--corpay">
-          <div class="stack corpay-side">
-            <div class="ghost-wrap" aria-hidden="true">
-              <div class="ghost" id="ghost">
-                <svg class="ghost__caret" viewBox="0 0 1252.6 1000"><polygon fill="#FFFFFF" fill-opacity="0.35" points="449.9,0 802.4,0 1252.6,1000 900.2,1000 626.3,391.7 352.5,1000 0,1000"/></svg>
-                <svg class="ghost__logo" viewBox="0 0 242.708 57.1614">{{LOGO_DARK}}</svg>
-                <span class="ghost__virtual">Virtual</span>
-                <img class="ghost__art" src="data:image/webp;base64,{{CARD}}" width="1177" height="741" alt="">
-                <div class="ghost__row">
-                  <span class="ghost__name" id="ghostName">Brightwell Packaging</span>
-                  <span class="ghost__badge" id="ghostBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span id="ghostBadgeText">Locked</span></span>
-                </div>
-              </div>
-            </div>
-            <p>Corpay cards carry merchant controls, spend category limits and amount limits, so the checks happen before the money moves.</p>
-            <div class="btnrow"><button class="btn btn--primary" id="endBtn" type="button" disabled>See how you compare</button></div>
-          </div>
-          <div class="stack stack--tight">
-            <p class="list-hint" id="listNote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l14 8-6 2-2 6z"/></svg><span id="listNoteText">Each payment appears as the card rules handle it.</span></p>
-            <div class="clist" id="feed"></div>
-          </div>
-        </div>
-        <p class="fine corpay-fine">*Up to 1% rebate on qualifying spend. Subject to agreed card-based monthly volumes; actual rate depends on monthly spend. Illustrative, not guaranteed.</p>
-      </div>
-
-      <!-- 5 · End -->
+      <!-- 5 · End (6 Nov 2026): the card story and the whitepaper as banners, the prize draw beside them -->
       <div class="screen" id="s-end" hidden>
-        <div class="split">
-          <div class="stack">
-            <p class="label">The Payments Challenge · Your results</p>
-            <h2 class="h1" data-focus tabindex="-1">Put the control in the payment.</h2>
-            <p class="sub">Corpay cards carry merchant controls, spend category limits and amount limits, so the checks happen before the money moves. Supplier payments on card can earn up to 1% in rebates.*</p>
-            <div class="score glass">
-              <table>
-                <thead><tr><th scope="col"><span class="sr">Measure</span></th><th scope="col">Your desk</th><th scope="col">On Corpay</th></tr></thead>
-                <tbody>
-                  <tr><td>Correct calls</td><td id="e-correct">0 of 10</td><td id="e-corpay-correct">10 of 10</td></tr>
-                  <tr><td>Problems stopped</td><td id="e-stop">0 of 4</td><td id="e-corpay-stop">4 of 4</td></tr>
-                  <tr><td>Paid in error</td><td id="e-error">£0</td><td>£0</td></tr>
-                  <tr><td>Rebate earned</td><td>£0</td><td id="e-rebate">Up to £0*</td></tr>
-                  <tr><td>Rebate a year on ongoing cards</td><td>£0</td><td id="e-year">Up to £0*</td></tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="btnrow">
-              <a class="btn btn--primary" href="https://www.corpay.com/en-GB/resources/whitepapers/the-card-first-approach-to-spend-modernisation" target="_blank" rel="noopener">Download the whitepaper</a>
-              <a class="btn btn--secondary" href="https://www.corpay.com/en-GB/contact-us" target="_blank" rel="noopener">Talk to an expert</a>
-              <button class="linkbtn" id="againBtn" type="button">Play again</button>
-            </div>
-            <p class="fine">*Up to 1% rebate on qualifying spend. Subject to agreed card-based monthly volumes; actual rate depends on monthly spend. Illustrative, not guaranteed.<br>Survey figure: Censuswide survey (Feb 2026) of 300 UK CFOs with £20m+ turnover.</p>
+        <div class="end">
+          <div class="end__left">
+            <section class="banner banner--cards" aria-labelledby="endTitle">
+              <div class="banner__text">
+                <p class="banner__eyebrow">Corpay cards</p>
+                <h2 class="h2" id="endTitle" data-focus tabindex="-1">Put the control in the payment.</h2>
+                <p>Corpay cards carry merchant controls, spend category limits and amount limits, so the checks happen before the money moves. Supplier payments on card can earn up to 1% in rebates.*</p>
+                <a class="btn btn--white" href="https://www.corpay.com/en-GB/contact-us" target="_blank" rel="noopener">Talk to an expert</a>
+              </div>
+              <img class="banner__card" src="data:image/webp;base64,{{CARD}}" width="1177" height="741" alt="">
+            </section>
+            <section class="banner banner--paper" aria-labelledby="paperTitle">
+              <div class="banner__text">
+                <p class="banner__eyebrow">Free whitepaper</p>
+                <h2 class="h2" id="paperTitle">The Card-First Approach to Spend Modernisation</h2>
+                <a class="btn btn--white" href="https://www.corpay.com/en-GB/resources/whitepapers/the-card-first-approach-to-spend-modernisation" target="_blank" rel="noopener">Download the whitepaper</a>
+              </div>
+              <img class="banner__book" src="data:image/webp;base64,{{COVER}}" width="640" height="404" alt="">
+            </section>
+            <button class="linkbtn again" id="againBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>Play again</button>
+            <p class="fine">*Up to 1% rebate on qualifying spend. Subject to agreed card-based monthly volumes; actual rate depends on monthly spend. Illustrative, not guaranteed.</p>
           </div>
           <section class="draw glass" aria-labelledby="drawTitle">
             <div class="draw__panel" id="drawForm">
-              <p class="label">🎁 Win a Christmas hamper for your team</p>
+              <p class="label draw__eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C9.5 3 11 5 12 8c1-3 2.5-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>Win a Christmas hamper for your team</p>
               <h2 class="h2" id="drawTitle">Finance doesn’t have to be this stressful.</h2>
-              <p>Leave your details and we’ll enter you into our prize draw for a Christmas hamper big enough for a team of up to ten. Everyone who plays can enter, whatever their score. The draw closes on 11 December 2026.</p>
+              <p>Leave your details to enter the draw for The Fortnum’s Family Christmas Hamper. Your team’s in the draw once five people from your company have entered, you included. The draw closes at 5pm on 11 December 2026.</p>
               <form class="entry" id="entry" novalidate>
                 <div class="fields">
                   <div class="field"><label for="f-first">First name*</label><input id="f-first" name="first" autocomplete="given-name" required aria-describedby="x-first"><p class="err" id="x-first" hidden>Enter your first name.</p></div>
@@ -879,23 +898,17 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
                   <div class="field"><label for="f-title">Job title*</label><input id="f-title" name="title" autocomplete="organization-title" required aria-describedby="x-title"><p class="err" id="x-title" hidden>Enter your job title.</p></div>
                   <div class="field"><label for="f-company">Company*</label><input id="f-company" name="company" autocomplete="organization" required aria-describedby="x-company"><p class="err" id="x-company" hidden>Enter your company name.</p></div>
                 </div>
-                <p class="small accent" id="mktNotice">By entering, you agree to the <a href="#" data-placeholder="prize draw terms">prize draw terms</a> and Corpay’s <a href="https://www.corpay.com/corpay-complete/privacy-policy" target="_blank" rel="noopener">privacy policy</a>. We’ll email you your score and your company leaderboard, plus insights, news and offers from Corpay. You can unsubscribe at any time.</p>
-                <button class="btn btn--primary btn--lg" type="submit">Enter the draw</button>
-                <p class="small accent">One entry per person. No purchase necessary.</p>
+                <p class="small" id="mktNotice">By entering, you agree to the <a href="#" data-placeholder="prize draw terms">prize draw terms</a> and Corpay’s <a href="https://www.corpay.com/corpay-complete/privacy-policy" target="_blank" rel="noopener">privacy policy</a>. We’ll email you your score, plus insights, news and offers from Corpay. You can unsubscribe at any time.</p>
+                <button class="btn btn--white btn--lg" type="submit">Enter the draw</button>
+                <p class="small">One entry per person. Open to UK residents aged 18 or over. No purchase necessary.</p>
               </form>
             </div>
             <div class="draw__panel" id="drawDone" hidden>
-              <p class="label">🎁 Win a Christmas hamper for your team</p>
-              <h2 class="h2" id="doneTitle" tabindex="-1">You’re in the draw.</h2>
-              <p>We’ll email the winner by 18 December 2026. In the meantime, see how finance teams are starting with cards.</p>
-              <!-- Shown to everyone who enters: entering opts them in to marketing, which carries the score email and leaderboard -->
-              <div class="challenge" id="challenge">
-                <p class="label">Challenge your colleagues</p>
-                <p>Your score is on its way to your inbox. Share the game with your team. Once five other people from <span id="challengeCo">your company</span> have played, your company leaderboard unlocks and we’ll email it to you.</p>
-                <div class="share"><input id="shareLink" readonly aria-label="Link to the game"><button class="btn btn--secondary" id="copyBtn" type="button">Copy link</button></div>
-              </div>
-              <img src="data:image/webp;base64,{{COVER}}" width="640" height="404" alt="The Card-First Approach to Spend Modernisation whitepaper">
-              <a class="btn btn--primary" href="https://www.corpay.com/en-GB/resources/whitepapers/the-card-first-approach-to-spend-modernisation" target="_blank" rel="noopener">Download the whitepaper</a>
+              <p class="label draw__eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C9.5 3 11 5 12 8c1-3 2.5-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>Win a Christmas hamper for your team</p>
+              <h2 class="h2" id="doneTitle" tabindex="-1">You’re in. Now get your team playing.</h2>
+              <p>Your team’s in the draw once five people from your company have entered, you included. Share the game with your colleagues before 5pm on 11 December.</p>
+              <div class="share"><input id="shareLink" readonly aria-label="Link to the game"><button class="btn btn--white" id="copyBtn" type="button">Copy link</button></div>
+              <p class="small">We’ll email the winning team by 18 December 2026.</p>
             </div>
           </section>
         </div>
@@ -1173,19 +1186,33 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
   const Word = n => ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen', 'Twenty'][n] || String(n);
   const stage = $('#stage'), live = $('#live');
 
+  // Payments look like what they are (6 Nov 2026): one skeleton, one cue per medium
+  const ICON = {
+    email: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+    invoice: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>',
+    expense: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3v18l2-1.5L9 21l2-1.5 2 1.5 2-1.5 2 1.5 2-1.5V3z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg>',
+  };
+  const initials = s => s.replace(/[^A-Za-z ]/g, ' ').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
   function docHTML(item, cls = '') {
-    const rows = item.rows.map(([k, v]) => `<div class="doc__row"><span>${esc(k)}</span><span>${esc(v)}</span></div>`).join('');
-    return `<article class="doc ${cls}">
-      <div class="doc__top"><span class="doc__type">${esc(item.type)}</span><span>${esc(item.ref)}</span></div>
-      <h3 class="doc__title">${esc(item.title)}</h3>
-      ${item.body ? `<p class="doc__body">${esc(item.body)}</p>` : ''}
-      <hr>${rows}<hr>
+    const skin = /email/i.test(item.type) ? 'email' : item.type === 'Expense' ? 'expense' : 'invoice';
+    let rows = item.rows, head = `<h3 class="doc__title">${esc(item.title)}</h3>`, body = '';
+    if (skin === 'email') {
+      const [fromLine, ...rest] = (item.body || '').split('\n');
+      const sender = (rows.find(r => r[0] === 'Supplier') || [, item.title])[1];
+      rows = rows.filter(r => r[0] !== 'Supplier');
+      head = `<div class="doc__from"><span class="doc__mono" aria-hidden="true">${initials(sender)}</span><span class="doc__who"><span class="doc__sender">${esc(sender)}</span><span class="doc__addr">${esc(fromLine.replace(/^From /, ''))}</span></span><span class="doc__ext">External</span></div>${head}`;
+      body = `<p class="doc__body">${esc(rest.join('\n'))}</p>`;
+    } else if (skin === 'invoice') {
+      head = `<div class="doc__supplier"><span class="doc__mono" aria-hidden="true">${initials(item.title)}</span><h3 class="doc__title">${esc(item.title)}</h3></div>`;
+    }
+    const rowsHTML = rows.map(([k, v]) => `<div class="doc__row"><span>${esc(k)}</span><span>${esc(v)}</span></div>`).join('');
+    return `<article class="doc doc--${skin} ${cls}">
+      <div class="doc__top">${ICON[skin]}<span class="doc__type">${esc(item.type.replace(' · ', ' '))}</span><span>${esc(item.ref)}</span></div>
+      ${head}${body}
+      <hr>${rowsHTML}<hr>
       <div class="doc__amount"><span>${esc(item.amountLabel)}</span><strong>${money(item.amount)}</strong></div>
       <span class="stamp stamp--ok">Approved</span><span class="stamp stamp--no">Rejected</span>
     </article>`;
-  }
-  function rowHTML(title, meta, amount, tone, label, isNew) {
-    return `<div class="row${isNew ? ' row--new' : ''}"><span class="row__text"><span class="row__title">${esc(title)}</span><span class="row__meta">${esc(meta)}</span></span><span class="row__amt">${esc(amount)}</span><span class="chip chip--${tone}">${esc(label)}</span></div>`;
   }
 
   // ---------- Tracking (5 Nov 2026) ----------
@@ -1255,13 +1282,13 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
     busy = false;
     setSheet(false);
     show('play');
-    if (withExample) { renderDone(); updateHud(); $('#barFill').style.transform = 'scaleX(1)'; return startWalk(); }
+    if (withExample) { updateHud(); $('#barFill').style.transform = 'scaleX(1)'; return startWalk(); }
     beginClock();
   }
   function beginClock() {
     track('round-1');
     st.paused = false; st.start = performance.now(); st.next = st.start + ARRIVE_MS; st.left = ROUND_MS;
-    renderTray(); renderDone(); updateHud();
+    renderTray(); updateHud();
     live.textContent = 'Round 1 started. 75 seconds.';
     clearInterval(clock); clock = setInterval(() => tick(performance.now()), 100); tick(performance.now());
   }
@@ -1295,7 +1322,7 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
     const name = pair.firstElementChild.textContent, acct = pair.lastElementChild.textContent.replace('ending ', '');
     const fake = String((Number(acct) + 5371) % 10000).padStart(4, '0');
     const inv = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() + '-1187';
-    const item = { type: 'Example · Email', ref: 'Today 08:12', title: 'New bank details',
+    const item = { type: 'Example email', ref: 'Today 08:12', title: 'New bank details',
       body: `From accounts@${name.toLowerCase().replace(/[^a-z]+/g, '-')}.co\nHi, we’ve changed banks for the new year. Please pay invoice ${inv} into our new account below.`,
       rows: [['Supplier', name], ['Invoice', inv], ['Pay to', 'New account ending ' + fake]], amountLabel: 'Amount', amount: 186742 };
     return { item, name, acct, fake, pair };
@@ -1317,7 +1344,7 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
     walk.i = i;
     const s = WALK[i], phone = innerWidth <= 760;
     if (phone) setSheet(!!s.sheet);
-    $('#walkStep').textContent = `How to check a payment · ${i + 1} of ${WALK.length}`;
+    $('#walkStep').textContent = `How to check a payment: ${i + 1} of ${WALK.length}`;
     $('#walkTitle').textContent = s.title;
     $('#walkText').textContent = s.text(walk.ex);
     $('#walkBack').hidden = i === 0;
@@ -1394,16 +1421,7 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
       return;
     }
     const behind = p.slice(1, 3).map((it, i) => docHTML(it, 'behind b' + (i + 1))).reverse().join('');
-    tray.innerHTML = behind + docHTML(p[0], 'current').replace('<article class="doc current"', '<article class="doc current" id="current" aria-label="Current payment"');
-  }
-
-  function renderDone() {
-    const recent = st.order.slice(-5).reverse();
-    $('#doneList').innerHTML = recent.map(id => {
-      const it = ITEMS.find(i => i.id === id), ok = st.decisions.get(id);
-      return rowHTML(it.ref, it.title, money(it.amount), ok ? 'good' : 'neutral', ok ? 'Approved' : 'Rejected');
-    }).join('');
-    $('#doneLabel').textContent = `Done · ${st.decisions.size} of ${ITEMS.length}`;
+    tray.innerHTML = behind + docHTML(p[0], 'current').replace('<article ', '<article id="current" aria-label="Current payment" ');
   }
 
   function decide(ok) {
@@ -1423,7 +1441,7 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
     }
     setTimeout(() => {
       busy = false;
-      renderTray(); renderDone(); updateHud();
+      renderTray(); updateHud();
       if (st.decisions.size === ITEMS.length) endRound();
     }, reduce ? 0 : 300);
   }
@@ -1435,23 +1453,25 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
     const el = e.target.closest('#current');
     if (!el || busy) return;
     drag = { el, x: e.clientX, dx: 0, id: e.pointerId };
-    el.setPointerCapture(e.pointerId); el.style.transition = 'none'; el.classList.add('dragging');
+    el.setPointerCapture(e.pointerId); el.style.transition = 'transform .12s ease-out'; el.classList.add('dragging');
+    el.style.transform = 'scale(0.8)'; $('#intray').classList.add('is-dragging');
   });
   tray.addEventListener('pointermove', e => {
     if (!drag || e.pointerId !== drag.id) return;
     drag.dx = e.clientX - drag.x;
-    drag.el.style.transform = `translateX(${drag.dx}px) rotate(${drag.dx / 22}deg)`;
+    drag.el.style.transition = 'none';
+    drag.el.style.transform = `translateX(${drag.dx}px) rotate(${drag.dx / 22}deg) scale(0.8)`;
     drag.el.querySelector('.stamp--ok').style.opacity = Math.max(0, Math.min(1, drag.dx / 110));
     drag.el.querySelector('.stamp--no').style.opacity = Math.max(0, Math.min(1, -drag.dx / 110));
-    // The card leans blue towards Approve and magenta towards Reject
-    drag.el.style.setProperty('--lean-c', drag.dx > 0 ? 'var(--light-blue)' : 'var(--magenta)');
-    drag.el.style.setProperty('--lean', Math.min(0.22, Math.abs(drag.dx) / 500).toFixed(3));
+    // The half the card is over fills in, and the other button dims
+    $('#intray').classList.toggle('lean-ok', drag.dx > 24); $('#intray').classList.toggle('lean-no', drag.dx < -24);
   });
   const endDrag = e => {
     if (!drag || e.pointerId !== drag.id) return;
     const el = drag.el, dx = e.clientX - drag.x; drag = null; el.classList.remove('dragging');
+    $('#intray').classList.remove('is-dragging', 'lean-ok', 'lean-no');
     if (Math.abs(dx) > 110) return decide(dx > 0);
-    el.style.transition = 'transform .2s ease-out'; el.style.transform = ''; el.style.setProperty('--lean', 0);
+    el.style.transition = 'transform .2s ease-out'; el.style.transform = '';
     for (const s of el.querySelectorAll('.stamp')) s.style.opacity = 0;
   };
   tray.addEventListener('pointerup', endDrag);
@@ -1466,11 +1486,17 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
   });
   $('#sheetBtn').addEventListener('click', () => setSheet(!$('#checks').classList.contains('open')));
 
-  // ---------- Result ----------
-  let r1 = null;
+  // ---------- Result: your desk and Corpay on one screen ----------
+  let r1 = null, revealTimer = 0, countRaf = 0;
+  const CHK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>';
+  const XC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6"/><path d="m15 9-6 6"/></svg>';
+  const CLK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+  const WHY = { invoice: i => `Genuine: on the supplier file and matches ${i.po[0]}`, expense: () => 'Genuine: within the expenses policy', ads: () => 'Genuine: Connectwork Ads is the approved network', renewal: () => 'Genuine: has a current owner' };
+  const totalsHTML = rows => rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
+  const chip = (kind, label) => `<span class="vchip vchip--${kind}">${kind === 'caught' ? CHK : kind === 'missed' ? XC : CLK}${esc(label)}</span>`;
   function endRound() {
     if (st.over) return;
-    st.over = true; clearInterval(clock);
+    st.over = true; clearInterval(clock); clearTimeout(revealTimer); cancelAnimationFrame(countRaf);
     const statusOf = it => st.decisions.has(it.id) ? (st.decisions.get(it.id) ? 'through' : 'stopped') : 'tray';
     const stopped = TRAPS.filter(t => statusOf(t) === 'stopped');
     const through = TRAPS.filter(t => statusOf(t) === 'through');
@@ -1486,137 +1512,77 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
     const missedGood = heldUp.length + late.length;
     const result = stopped.length >= 4 && !missedGood ? 'Sharp eye' : stopped.length >= 3 && missedGood ? 'Too cautious' : stopped.length >= 2 ? 'Close call' : 'Swamped';
     const error = through.reduce((s, t) => s + t.amount, 0);
+    const held = [...heldUp, ...late].reduce((s, i) => s + i.amount, 0);
     // The line for Marketo Person Notes; E1 picks its version from how it starts. Wired in when the form embed arrives.
     const personNotes = `${result} · ${correct} of ${ITEMS.length} · ${money(error)} paid in error · ${fmtTime(taken)}`;
     r1 = { stopped: stopped.length, error, correct, taken, result, personNotes };
 
-    const early = st.left > 0;
-    $('#r-title').textContent = early ? 'Round 1 · Finished early' : 'Round 1 · Time’s up';
-    $('#r-correct').textContent = `${correct} of ${ITEMS.length}`;
-    $('#r-time').textContent = fmtTime(taken);
-    $('#r-paid').textContent = money(paidOut());
+    // Headline and one totals-only line, then the stat
     $('#verdict').textContent = `You stopped ${stopped.length} of ${TRAPS.length}.`;
-    $('#trapLabel').textContent = `Your ${Word(TRAPS.length).toLowerCase()} problem payments`;
-
-    let detail;
-    const phrases = through.map(t => t.trap.phrase);
-    if (phrases.length >= 4) {
-      detail = `${Word(phrases.length)} problem payments went out, worth ${money(r1.error)}.`;
-    } else if (phrases.length) {
-      const list = phrases.length === 1 ? phrases[0] : phrases.length === 2 ? `${phrases[0]}, and ${phrases[1]}` : `${phrases.slice(0, -1).join(', ')} and ${phrases[phrases.length - 1]}`;
-      detail = list.charAt(0).toUpperCase() + list.slice(1) + '.';
-    } else if (trapsInTray.length) {
-      detail = `Nothing bad went out. ${Word(trapsInTray.length)} problem ${plural(trapsInTray.length, 'payment was', 'payments were')} still waiting in the tray.`;
-    } else if (heldUp.length) {
-      detail = `Every problem payment was stopped, but you held up ${Word(heldUp.length).toLowerCase()} good ${plural(heldUp.length, 'payment', 'payments')} worth ${money(heldUp.reduce((s, i) => s + i.amount, 0))} too. Those suppliers will be chasing after Christmas.`;
-    } else if (late.length) {
-      detail = 'Every problem payment was stopped before it left your desk.';
-    } else {
-      detail = 'Every problem payment was stopped and every good one went out. That’s a clear desk for Christmas. 🎄';
-    }
+    const parts = [];
+    if (through.length) parts.push(`${Word(through.length)} problem ${plural(through.length, 'payment', 'payments')} got through, worth ${money(error)}`);
+    else if (trapsInTray.length) parts.push(`${Word(trapsInTray.length)} problem ${plural(trapsInTray.length, 'payment was', 'payments were')} still in the tray`);
+    if (missedGood) parts.push(`${Word(missedGood)} good ${plural(missedGood, 'payment', 'payments')} didn’t go out`);
+    const wrong = through.length + trapsInTray.length + missedGood;
+    let detail = parts.length ? parts.map((p, k) => k ? p.charAt(0).toLowerCase() + p.slice(1) : p).join(', and ') + '.' : 'Every call was right. That’s a clear desk for Christmas. 🎄';
+    if (wrong) detail += ' You’re not alone: 85% of CFOs believe their current payment processes increase the risk of error, fraud or off-policy spend.¹';
     $('#verdictDetail').textContent = detail;
+    $('#statFine').hidden = !wrong;
 
-    $('#trapList').innerHTML = TRAPS.map(t => {
-      const s = statusOf(t);
-      const [tone, label] = s === 'stopped' ? ['stop', 'Stopped'] : s === 'through' ? ['warn', 'Got through'] : ['neutral', 'In the tray'];
-      return rowHTML(t.trap.name, `${t.trap.cat} · ${t.trap.meta}`, money(t.amount), tone, label);
-    }).join('');
-
-    // Name every good payment that didn't go out, the way the problem payments are listed (user, 23 Oct 2026)
-    const WHY = { invoice: i => `Genuine · on the supplier file and matches ${i.po[0]}`, expense: () => 'Genuine · within the expenses policy', ads: () => 'Genuine · Connectwork Ads is the approved network', renewal: () => 'Genuine · has a current owner (renewals aren’t on the supplier file)' };
-    const missed = [...heldUp.map(i => [i, 'warn', 'Held up']), ...late.map(i => [i, 'neutral', 'In the tray'])];
-    $('#heldLabel').hidden = $('#heldList').hidden = !missed.length;
-    $('#heldLabel').textContent = `Good ${plural(missed.length, 'payment', 'payments')} that didn’t go out · ${money(missed.reduce((n, [i]) => n + i.amount, 0))}`;
-    $('#heldList').innerHTML = missed.map(([i, tone, label]) => rowHTML(`${i.ref} ${i.title}`, WHY[i.kind] ? WHY[i.kind](i) : 'Genuine', money(i.amount), tone, label)).join('');
-
-    const notes = [];
-    if (late.length) notes.push(`${plural(late.length, 'The one', 'Those')} still in the tray when the clock stopped will go out late.`);
-    $('#lateNote').textContent = notes.join(' ');
+    // Only the wrong calls get a card, in the order they were dealt
+    const misses = ITEMS.map(it => {
+      const s = statusOf(it);
+      if (it.trap && s === 'through') return { it, kind: 'missed', chip: 'Missed', amt: '-' + money(it.amount), title: it.trap.name, meta: `${it.trap.cat}: ${it.trap.meta}` };
+      if (it.trap && s === 'tray') return { it, kind: 'held', chip: 'Not checked', amt: money(it.amount), title: it.trap.name, meta: `${it.trap.cat}: ${it.trap.meta}` };
+      if (!it.trap && s === 'stopped') return { it, kind: 'held', chip: 'Held up', amt: money(it.amount), title: `${it.ref} ${it.title}`, meta: WHY[it.kind] ? WHY[it.kind](it) : 'Genuine' };
+      if (!it.trap && s === 'tray') return { it, kind: 'held', chip: 'Still in the tray', amt: money(it.amount), title: `${it.ref} ${it.title}`, meta: WHY[it.kind] ? WHY[it.kind](it) : 'Genuine' };
+      return null;
+    }).filter(Boolean);
+    $('#deskTotals').innerHTML = totalsHTML([['Correct calls', `${correct} of ${ITEMS.length}`], ['Paid in error', money(error)], ['Held up', money(held)], ['Rebate earned', '£0']]);
+    $('#deskLabel').textContent = misses.length === 1 ? 'Your 1 wrong call' : `Your ${misses.length} wrong calls`;
+    $('#deskLabel').hidden = !misses.length;
+    $('#deskCards').innerHTML = misses.length ? misses.map(m => `<div class="scard scard--${m.kind}"><div class="scard__head">${chip(m.kind, m.chip)}<span class="scard__amt">${esc(m.amt)}</span></div><p class="scard__title">${esc(m.title)}</p><p class="scard__meta">${esc(m.meta)}</p></div>`).join('') : '<p class="cards__none">Every call was right.</p>';
+    // With Corpay waits behind a blur, the same number of rows as placeholders
+    const panel = $('#corpayPanel'); panel.classList.add('is-waiting'); panel.classList.remove('is-revealing');
+    $('#corpayBody').setAttribute('aria-hidden', 'true');
+    $('#corpayTotals').innerHTML = totalsHTML([['Correct calls', '?'], ['Paid in error', '?'], ['Held up', '?'], ['Rebate earned', '?']]);
+    $('#corpayLabel').textContent = misses.length === 1 ? 'The same payment on Corpay' : `The same ${misses.length} on Corpay`;
+    $('#corpayLabel').hidden = !misses.length;
+    $('#corpayCards').innerHTML = misses.length ? misses.map(() => '<div class="scard scard--wait"><span class="wait__chip"></span><span class="wait__line"></span></div>').join('') : '<p class="cards__none">Nothing to fix.</p>';
+    r1.misses = misses;
+    $('#resultNext').hidden = true; $('#rebateFine').hidden = true;
 
     show('result');
     track('result', 'campaign_round_complete', result, correct);
-    live.textContent = `${early ? 'Finished early' : 'Time’s up'}. You stopped ${stopped.length} of ${TRAPS.length} problem payments.`;
+    live.textContent = `${st.left > 0 ? 'Finished early' : 'Time’s up'}. You stopped ${stopped.length} of ${TRAPS.length} problem payments, and made ${correct} of ${ITEMS.length} calls right.`;
   }
 
-  // ---------- Round 2: what if you'd used Corpay? ----------
-  // No autoplay, tabs or detail panel (user, 5 Nov 2026): the ten payments land at once, the counters count up,
-  // and each row says what your desk did with it. Opening a row shows the control and the rule; the card follows it.
-  let revealTimer = 0, countRaf = 0;
-  const REVEAL_STEP_MS = 110;
-  // Small in-person spend shows its rebate in pence (1% of £64 is £0.64, not £0)
-  const rebateText = amount => amount ? 'Up to ' + (amount < 1000 ? '£' + (amount / 100).toFixed(2) : money(Math.floor(amount * 0.01))) + '*' : 'None. No money moved.';
-  const CHEVRON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
-  // What happened to the same payment on your desk in round 1; a miss is anything Corpay handled differently
-  function yourCall(it) {
-    const d = st.decisions.get(it.id);
-    if (d === undefined) return ['Your desk: still in the tray', true];
-    if (it.trap) return d ? ['Your desk: got through', true] : ['Your desk: stopped it too', false];
-    return d ? ['Your desk: approved it too', false] : ['Your desk: held it up', true];
-  }
-  function corpayRowHTML(it, i) {
-    const c = it.corpay, d = it.detail, [you, miss] = yourCall(it);
-    return `<div class="crow" style="--i:${i}">
-      <button type="button" class="row row--btn" data-id="${it.id}" aria-expanded="false" aria-controls="why-${it.id}"><span class="row__text"><span class="row__title">${esc(it.feedTitle || `${it.ref} ${it.title}`)}</span><span class="row__meta">${esc(c.meta)}</span><span class="row__you${miss ? ' is-miss' : ''}">${esc(you)}</span></span><span class="row__amt">${money(c.amount || it.amount)}</span><span class="chip chip--${c.tone}">${esc(c.label)}</span><span class="row__go" aria-hidden="true">${CHEVRON}</span></button>
-      <div class="crow__why" id="why-${it.id}" hidden>${it.physical ? `<img class="inline-card" src="${$('.ghost__art').src}" width="1177" height="741" alt="Physical Corpay card">` : ''}<p class="crow__ctl">What Corpay did · ${esc(d.control)}</p><p>${esc(d.rule)}</p><p class="crow__reb">Card: ${esc(d.card)} · Rebate: ${esc(rebateText(c.amount))}</p></div>
-    </div>`;
-  }
-  // In-person spend shows the physical Corpay card; everything else shows the virtual (ghost) card
-  function setGhost(name, badge, stop, physical, quiet) {
-    $('#ghostName').textContent = name;
-    $('#ghostBadgeText').textContent = badge;
-    $('#ghostBadge').classList.toggle('ghost__badge--stop', stop);
-    const g = $('#ghost'); g.classList.toggle('ghost--physical', !!physical);
-    g.classList.remove('flip', 'swap'); void g.offsetWidth;
-    if (!reduce) g.classList.add(quiet ? 'swap' : 'flip');
-  }
-  // One row open at a time. Opening never moves the page: the row grows in place.
-  function openRow(it, fromClick) {
-    for (const b of $('#feed').querySelectorAll('[data-id]')) {
-      const on = +b.dataset.id === it.id && !(fromClick && b.getAttribute('aria-expanded') === 'true');
-      b.setAttribute('aria-expanded', String(on)); b.parentElement.classList.toggle('is-open', on);
-      $('#why-' + b.dataset.id).hidden = !on;
-    }
-    setGhost(it.card, it.badge || 'Locked', !!it.stop, !!it.physical, !fromClick);
-  }
+  // ---------- What if you'd used Corpay? The With Corpay panel fills in place ----------
   function runCorpay() {
-    show('corpay');
     track('corpay', 'campaign_corpay_reveal');
     clearTimeout(revealTimer); cancelAnimationFrame(countRaf);
-    const feed = $('#feed');
-    feed.innerHTML = ITEMS.map(corpayRowHTML).join('');
-    feed.classList.toggle('is-revealing', !reduce);
-    $('#endBtn').disabled = true;
-    $('#listNote').classList.remove('is-ready');
-    $('#listNoteText').textContent = 'Each payment appears as the card rules handle it.';
-    const first = ITEMS.find(i => i.kind === 'bank') || TRAPS[0]; // a bank-change email is the catch most worth a look
-    setGhost(first.card, first.badge || 'Locked', !!first.stop, !!first.physical, true);
+    const panel = $('#corpayPanel'), misses = r1.misses;
+    $('#corpayCards').innerHTML = misses.length ? misses.map((m, k) => {
+      const ok = !!m.it.trap, d = m.it.detail;
+      return `<div class="scard scard--caught" style="--i:${k}"><div class="scard__head">${chip('caught', ok ? 'Caught' : 'Paid')}</div><p class="scard__name">${esc(m.title)}</p><p class="scard__title">${esc(d.control)}</p><p class="scard__meta">${esc(m.it.corpay.meta.replace(' · ', ', '))}</p></div>`;
+    }).join('') : '<p class="cards__none">Nothing to fix. The card rules make the same calls.</p>';
+    panel.classList.remove('is-waiting'); panel.classList.toggle('is-revealing', !reduce);
+    $('#corpayBody').removeAttribute('aria-hidden');
     const paid = ITEMS.reduce((s, i) => s + i.corpay.amount, 0);
-    const set = f => {
-      $('#k-stop').textContent = `${Math.round(TRAPS.length * f)} of ${TRAPS.length}`;
-      $('#k-paid').textContent = money(paid * f);
-      $('#k-rebate').textContent = 'Up to ' + money(Math.floor(paid * f * 0.01)) + '*';
-      $('#kBar').style.transform = `scaleX(${f})`;
-    };
+    const set = f => { $('#corpayTotals').innerHTML = totalsHTML([['Correct calls', `${Math.round(ITEMS.length * f)} of ${ITEMS.length}`], ['Paid in error', '£0'], ['Held up', '£0'], ['Rebate earned', 'Up to ' + money(Math.floor(paid * f * 0.01)) + '*']]); };
     const finish = () => {
       set(1);
-      feed.classList.remove('is-revealing');
-      $('#endBtn').disabled = false;
-      $('#listNote').classList.add('is-ready');
-      $('#listNoteText').textContent = `${matchMedia('(pointer: coarse)').matches ? 'Tap' : 'Click'} any payment to see the Corpay control behind it.`;
-      openRow(first);
-      live.textContent = `Round 2. On Corpay, all ${Word(TRAPS.length).toLowerCase()} problem payments were stopped and the good ones went out. Select a payment to see the card rule behind it.`;
+      $('#resultNext').hidden = false; $('#rebateFine').hidden = false;
+      live.textContent = `With Corpay, all ${Word(TRAPS.length).toLowerCase()} problem payments were stopped and every good payment went out.`;
+      $('#corpayPanel').focus?.();
     };
     if (reduce) return finish();
-    // The counters count up while the rows land (about a second and a half in all)
-    const dur = ITEMS.length * REVEAL_STEP_MS + 400, t0 = performance.now();
+    // The totals count up while the rows land
+    const dur = Math.max(1, misses.length) * 140 + 600, t0 = performance.now();
     const frame = now => { const f = Math.min(1, (now - t0) / dur); set(1 - Math.pow(1 - f, 3)); if (f < 1) countRaf = requestAnimationFrame(frame); };
     set(0); countRaf = requestAnimationFrame(frame);
     revealTimer = setTimeout(finish, dur);
   }
-  $('#feed').addEventListener('click', e => {
-    const b = e.target.closest('[data-id]');
-    if (b && !$('#feed').classList.contains('is-revealing')) openRow(ITEMS.find(i => i.id === +b.dataset.id), true);
-  });
 
   // ---------- Prize draw (not wired to a CRM yet: nothing is stored or sent) ----------
   $('#entry').addEventListener('submit', e => {
@@ -1631,7 +1597,6 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
     }
     if (first) { first.focus(); return; }
     // Entering the draw opts people in to marketing (Marketo team, 26 Oct 2026: no tick box), so everyone gets the score email and the colleague challenge
-    $('#challengeCo').textContent = $('#f-company').value.trim();
     const share = new URL(location.href); share.searchParams.delete('step'); share.hash = '';
     $('#shareLink').value = share.href;
     $('#drawForm').hidden = true; $('#drawDone').hidden = false;
@@ -1646,16 +1611,9 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
     try { navigator.clipboard.writeText(inp.value).then(done, select); } catch (err) { select(); }
   });
   for (const a of document.querySelectorAll('a[data-placeholder]')) a.addEventListener('click', e => e.preventDefault());
-  for (const a of document.querySelectorAll('#s-end a.btn, #drawDone a.btn')) a.addEventListener('click', () => track(null, 'campaign_cta_click', /whitepaper/.test(a.href) ? 'whitepaper' : 'talk_to_an_expert'));
+  for (const a of document.querySelectorAll('#s-end .banner a.btn')) a.addEventListener('click', () => track(null, 'campaign_cta_click', /whitepaper/.test(a.href) ? 'whitepaper' : 'talk_to_an_expert'));
 
   function showEnd() {
-    $('#e-correct').textContent = `${r1.correct} of ${ITEMS.length}`;
-    $('#e-corpay-correct').textContent = `${ITEMS.length} of ${ITEMS.length}`;
-    $('#e-stop').textContent = `${r1.stopped} of ${TRAPS.length}`;
-    $('#e-corpay-stop').textContent = `${TRAPS.length} of ${TRAPS.length}`;
-    $('#e-year').textContent = 'Up to ' + money(Math.floor(ONGOING.filter(o => !o.closed).reduce((s, o) => s + o.amount, 0) * 12 * 0.01)) + '*';
-    $('#e-error').textContent = money(r1.error);
-    $('#e-rebate').textContent = 'Up to ' + money(Math.floor(ITEMS.reduce((s, i) => s + i.corpay.amount, 0) * 0.01)) + '*';
     show('end');
     track('end', 'campaign_game_complete');
   }
@@ -1700,6 +1658,12 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
   $('#startBtn').addEventListener('click', () => startRound(true));
   $('#corpayBtn').addEventListener('click', runCorpay);
   $('#endBtn').addEventListener('click', showEnd);
+  // How to enter: a dialog (a bottom sheet on phones); Escape, the cross or a tap outside closes it
+  const howto = $('#howto');
+  $('#howBtn').addEventListener('click', () => howto.showModal());
+  $('#howClose').addEventListener('click', () => howto.close());
+  howto.addEventListener('click', e => { if (e.target === howto) howto.close(); });
+  $('#howPlay').addEventListener('click', () => { howto.close(); openMail('run'); });
   $('#againBtn').addEventListener('click', () => {
     clearTimeout(revealTimer); cancelAnimationFrame(countRaf);
     BAND = (BAND + 1 + rnd(BANDS.length - 1)) % BANDS.length; // a fresh deal at a different desk size
