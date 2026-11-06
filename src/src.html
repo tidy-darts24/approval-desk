@@ -157,7 +157,9 @@ a { color: inherit; }
 .scene--tree { z-index: -1; left: 186px; top: -389px; width: 999px; }
 .scene--desk { z-index: -1; left: -949px; top: 296px; width: 1971px; }
 .scene--hamper { z-index: 3; left: 310px; top: 30px; width: 731px; }
-@media (min-width: 1201px) {
+.scene-phone { display: none; }
+/* The live scene needs room: from 1300px the computer sits on the desk beside the copy, as in the Figma front */
+@media (min-width: 1300px) {
   .stage[data-screen="intro"] .stage__inner { min-height: 760px; padding-bottom: 0; }
   .stage .inbox-intro { grid-template-columns: 509px 675px; column-gap: 72px; justify-content: start; align-content: start; margin-top: 62px;
     grid-template-areas: "copy computer" "start computer"; grid-template-rows: auto 1fr; row-gap: 24px; }
@@ -166,16 +168,27 @@ a { color: inherit; }
   .stage .computer { align-self: start; width: 675px; }
   .stage .mail { height: 400px; }
 }
-@media (max-width: 1200px) { .scene--hamper { left: auto; right: -160px; top: 120px; width: 520px; } }
-@media (max-width: 760px) {
-  .stage .inbox-intro { grid-template-areas: "copy" "start" "computer"; }
-  .inbox-intro[data-view="inbox"] .computer { margin: 24px -16px 0; padding: 0 16px 140px; overflow: hidden; }
-  .inbox-intro[data-view="inbox"] .monitor { width: 600px; zoom: 0.5; }
-  .scene--tree { left: auto; right: -40px; top: -210px; width: 300px; }
-  .scene--desk { left: 50%; translate: -50% 0; top: 150px; width: 820px; }
-  .scene--hamper { left: auto; right: -14px; top: 40px; width: 250px; }
-  .inbox-intro:not([data-view="inbox"]) .scene { display: none; }
+/* Narrower screens (Won's mobile front): the copy and buttons first, then a picture of the desk scene. Tapping it opens the
+   month-end email, which then shows full width in place of the picture. */
+@media (max-width: 1299px) {
+  .stage .inbox-intro { grid-template-columns: minmax(0, 1fr); grid-template-areas: "copy" "start" "computer"; row-gap: 24px; }
+  .stage .inbox-intro .intro__copy { max-width: 640px; }
+  .scene { display: none; }
+  .inbox-intro[data-view="inbox"] .computer { padding-bottom: 0; }
+  .inbox-intro[data-view="inbox"] .computer::before, .inbox-intro[data-view="inbox"] .computer::after, .inbox-intro[data-view="inbox"] .monitor { display: none; }
+  .inbox-intro[data-view="inbox"] .scene-phone { display: block; position: relative; width: 100%; max-width: 640px; aspect-ratio: 390 / 430; padding: 0; border: 0; background: none; cursor: pointer; }
+  .scene-phone img { position: absolute; height: auto; max-width: none; pointer-events: none; }
+  .scene-phone__tree { left: 28.2%; top: 0; width: 111.3%; }
+  .scene-phone__props { left: -56.9%; top: 24.7%; width: 157.9%; }
+  .scene-phone:focus-visible { outline-offset: 6px; }
 }
+@media (min-width: 900px) and (max-width: 1299px) {
+  .stage .inbox-intro[data-view="inbox"] { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "copy computer" "start computer"; grid-template-rows: auto 1fr; column-gap: 40px; align-content: start; margin-top: 40px; }
+  .stage .inbox-intro[data-view="inbox"] .intro__copy, .stage .inbox-intro[data-view="inbox"] .intro__start { align-self: start; }
+  .inbox-intro[data-view="inbox"] .computer { align-self: start; }
+  .scene-phone__props { -webkit-mask-image: linear-gradient(90deg, transparent 30%, #000 50%); mask-image: linear-gradient(90deg, transparent 30%, #000 50%); }
+}
+@media (max-width: 760px) { .stage[data-screen="intro"] .stage__inner { padding-bottom: 0; } }
 
 /* Intro tags and How to enter (6 Nov 2026) */
 .tags { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -618,6 +631,7 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
           <div class="computer">
             <img class="scene scene--tree" src="data:image/webp;base64,{{SCENE_TREE}}" width="1199" height="1233" alt="">
             <img class="scene scene--desk" src="data:image/webp;base64,{{SCENE_DESK}}" width="1971" height="1581" alt="">
+            <button class="scene-phone" type="button" id="scenePhone" aria-label="Open the month-end email"><img class="scene-phone__tree" src="data:image/webp;base64,{{SCENE_TREE_PHONE}}" width="867" height="892" alt=""><img class="scene-phone__props" src="data:image/webp;base64,{{SCENE_PHONE}}" width="1232" height="648" alt=""></button>
             <img class="scene scene--hamper" src="data:image/webp;base64,{{SCENE_HAMPER}}" width="1169" height="1046" alt="The Fortnum’s Family Christmas Hamper">
             <div class="monitor">
               <div class="mail" aria-label="Your inbox" role="region">
@@ -1688,7 +1702,7 @@ button.mail__row--hl:hover { background: rgba(181, 66, 117, 0.14); }
   for (const r of document.querySelectorAll('button.mail__row')) r.addEventListener('click', () => openMail(r.dataset.mail));
   for (const b of document.querySelectorAll('.mail__folder')) b.addEventListener('click', () => showFolder(b.dataset.folder));
   for (const b of document.querySelectorAll('.mail__back')) b.addEventListener('click', () => openMail(null));
-  for (const b of document.querySelectorAll('#playBtn, .mail__torun')) b.addEventListener('click', () => openMail('run'));
+  for (const b of document.querySelectorAll('#playBtn, #scenePhone, .mail__torun')) b.addEventListener('click', () => openMail('run'));
   $('#startBtn').addEventListener('click', () => startRound(true));
   $('#corpayBtn').addEventListener('click', runCorpay);
   $('#endBtn').addEventListener('click', showEnd);
