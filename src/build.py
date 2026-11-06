@@ -24,6 +24,8 @@ out = (
     .replace("{{BANNER_BOOK}}", b64("banner-book.webp"))  # whitepaper book from CTA · Book (793:9105)
     .replace("{{SCENE_TREE}}", b64("scene-tree.webp"))  # Won's Figma front (2142:8525): Christmas tree, desk and hamper cut-outs
     .replace("{{SCENE_DESK}}", b64("scene-desk.webp"))
+    .replace("{{SCENE_PHONE}}", b64("scene-phone.webp"))  # Won's mobile front scene (2156:8601, Front props 1)
+    .replace("{{SCENE_TREE_PHONE}}", b64("scene-tree-phone.webp"))
     .replace("{{SCENE_HAMPER}}", b64("scene-hamper.webp"))  # Fortnum & Mason product photo: use needs their OK  # exported from Figma Card/flat-front (41:6782) at 2x, shadow cropped off
 )
 assert "{{" not in out, "unreplaced placeholder"
